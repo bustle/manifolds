@@ -2,6 +2,8 @@
 
 # Manifolds
 
+![CI](https://github.com/bustle/manifolds/actions/workflows/ci.yml/badge.svg)
+
 Manifolds is a framework designed to streamline the process of generating and managing data infrastructures in Google BigQuery using Terraform. By leveraging Manifolds, teams can efficiently create complex views that join dimensional data with multiple metrics tables, enabling more dynamic data interactions and fewer sandcastles.
 
 ## Philosophy
