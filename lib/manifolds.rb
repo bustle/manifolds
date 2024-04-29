@@ -4,5 +4,4 @@ require_relative "manifolds/version"
 
 module Manifolds
   class Error < StandardError; end
-  # Your code goes here...
 end
