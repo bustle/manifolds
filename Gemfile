@@ -4,8 +4,11 @@ source "https://rubygems.org"
 
 gem "thor"
 
-group :development, :test do
-  gem "rspec"
+group :development do
   gem "rubocop"
   gem "rubocop-rspec"
+end
+
+group :development, :test do
+  gem "rspec"
 end
