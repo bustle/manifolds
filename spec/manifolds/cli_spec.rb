@@ -42,12 +42,12 @@ RSpec.describe Manifolds::CLI do
         FileUtils.rm_rf(project_name)
       end
 
-      it "creates a tables directory" do
-        expect(Dir.exist?("tables")).to be true
+      it "creates a tables directory within the project" do
+        expect(Dir.exist?("./projects/#{sub_project_name}/tables")).to be true
       end
 
-      it "creates a routines directory" do
-        expect(Dir.exist?("routines")).to be true
+      it "creates a routines directory within the project" do
+        expect(Dir.exist?("./projects/#{sub_project_name}/routines")).to be true
       end
     end
 

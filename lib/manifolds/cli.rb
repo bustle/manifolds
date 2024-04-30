@@ -29,13 +29,14 @@ module Manifolds
 
     desc "add PROJECT_NAME", "Add a new project within the current umbrella project"
     def add(project_name)
+      project_path = "./projects/#{project_name}"
       unless Dir.exist?("./projects")
         @logger.error("Not inside a Manifolds umbrella project.")
         return
       end
 
-      FileUtils.mkdir_p("tables")
-      FileUtils.mkdir_p("routines")
+      FileUtils.mkdir_p("#{project_path}/tables")
+      FileUtils.mkdir_p("#{project_path}/routines")
       @logger.info "Added project '#{project_name}' with tables and routines directories."
     end
   end
