@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../lib/manifolds/cli"
+require_relative "../../lib/manifolds/cli"
 require "fileutils"
 
 RSpec.describe Manifolds::CLI do
