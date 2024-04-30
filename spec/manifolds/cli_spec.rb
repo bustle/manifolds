@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative "../lib/manifolds/cli"
+require_relative "../../lib/manifolds/cli"
 require "fileutils"
 
-RSpec.describe CLI do
+RSpec.describe Manifolds::CLI do
   describe "#new_umbrella" do
     subject(:cli) { described_class.new } # Using a named subject
 

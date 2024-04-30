@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "manifolds/cli"
 require_relative "manifolds/version"
 
 module Manifolds
