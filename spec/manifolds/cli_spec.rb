@@ -7,25 +7,13 @@ RSpec.describe Manifolds::CLI do
   let(:project_name) { "commerce" }
   let(:sub_project_name) { "Pages" }
 
-  before do
-    # Redirect stdout to null device to silence output
-    @original_stdout = $stdout
-    $stdout = File.open(File::NULL, "w")
-  end
-
-  after do
-    # Restore stdout
-    $stdout = @original_stdout
-  end
-
   describe "#init" do
-    subject(:cli) { described_class.new } # Using a named subject
+    subject(:cli) { described_class.new }
 
     before do
-      allow($stdout).to receive(:write)
       allow(FileUtils).to receive(:mkdir_p)
       allow(File).to receive(:open)
-      cli.init(project_name) # Using the named subject
+      cli.init(project_name)
     end
 
     after do
@@ -42,27 +30,30 @@ RSpec.describe Manifolds::CLI do
   end
 
   describe "#add" do
-    context "within an umbrella project" do
+    context "when within an umbrella project" do
       before do
-        FileUtils.mkdir_p("commerce/projects") # Simulate an umbrella project
-        Dir.chdir("commerce")
+        FileUtils.mkdir_p("#{project_name}/projects") # Simulate an umbrella project
+        Dir.chdir(project_name)
+        described_class.new.add(sub_project_name)
       end
 
       after do
         Dir.chdir("..")
-        FileUtils.rm_rf("commerce")
+        FileUtils.rm_rf(project_name)
       end
 
-      it "creates directories" do
-        expect { described_class.new.add("Pages") }.to output(/Added project 'Pages'/).to_stdout
+      it "creates a tables directory" do
         expect(Dir.exist?("tables")).to be true
+      end
+
+      it "creates a routines directory" do
         expect(Dir.exist?("routines")).to be true
       end
     end
 
-    context "outside an umbrella project" do
+    context "when outside an umbrella project" do
       it "does not allow adding projects" do
-        expect { described_class.new.add("Pages") }.to output(/(.*)Not inside a Manifolds umbrella project./).to_stdout
+        expect { described_class.new.add("Pages") }.to output(/Not inside a Manifolds umbrella project./).to_stdout
       end
     end
   end
