@@ -19,12 +19,6 @@ module Manifolds
       directory_path = "./#{name}/projects"
       FileUtils.mkdir_p(directory_path)
       @logger.info "Created umbrella project '#{name}' with a projects directory."
-      # Generate Gemfile inside the new umbrella project
-      File.open("./#{name}/Gemfile", "w") do |file|
-        file.puts "source 'https://rubygems.org'"
-        file.puts "gem 'thor'"
-      end
-      @logger.info "Generated Gemfile for the umbrella project."
     end
 
     desc "add PROJECT_NAME", "Add a new project within the current umbrella project"

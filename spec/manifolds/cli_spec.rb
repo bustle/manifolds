@@ -21,10 +21,6 @@ RSpec.describe Manifolds::CLI do
     it "creates the projects directory" do
       expect(FileUtils).to have_received(:mkdir_p).with("./#{project_name}/projects")
     end
-
-    it "creates the Gemfile" do
-      expect(File).to have_received(:open).with("./#{project_name}/Gemfile", "w")
-    end
   end
 
   describe "#add" do
