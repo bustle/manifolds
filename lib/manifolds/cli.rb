@@ -4,7 +4,7 @@ require "thor"
 require "fileutils"
 require "logger"
 
-require_relative "services/big_query"
+require_relative "services/big_query_service"
 
 module Manifolds
   # CLI provides command line interface functionality
