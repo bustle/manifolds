@@ -37,8 +37,8 @@ module Manifolds
       end
 
       def create_dimensions_file(project_name, dimensions)
-        FileUtils.mkdir_p("./projects/#{project_name}/bq")
-        File.write("./projects/#{project_name}/bq/dimensions.json", dimensions_schema(dimensions))
+        FileUtils.mkdir_p("./projects/#{project_name}/bq/tables")
+        File.write("./projects/#{project_name}/bq/tables/dimensions.json", dimensions_schema(dimensions))
         @logger.info("Generated BigQuery dimensions table schema for '#{project_name}'.")
       end
 

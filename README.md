@@ -26,16 +26,93 @@ At the heart of Manifolds, our philosophy is to simplify the complexity inherent
 
 ### Installation
 
-1. **Clone the repository**:
+1. **Install the Manifolds Gem**:
+   `manifolds` is distributed as a Ruby gem. To install it, run:
 
 ```bash
-git clone https://github.com/bustle/manifolds.git
-cd manifolds
+gem install manifolds
 ```
 
 2. **Setup Terraform**: Ensure that Terraform is installed and configured to interact with your Google Cloud Platform account.
 
 3. **Configure Your Environment**: Set up your environment variables and credentials to access Google BigQuery and other necessary services.
+
+## Usage
+
+1. **Initialize a New Umbrella Project**
+
+Set up a new umbrella project directory with the necessary structure for managing multiple data projects.
+
+```bash
+manifolds init <project_name>
+```
+
+2. **Add a New Data Project**
+
+Add a new data project under the umbrella. This setup includes creating a directory for the data project and initializing with a template `config.yml` file.
+
+```bash
+cd <project_name>
+manifolds add <data_project_name>
+```
+
+3. **Generate BigQuery Resource Definitions**
+
+After you fill out the config.yml file, this command generates the necessary BigQuery schema files based on the specified dimensions and metrics.
+
+```bash
+manifolds generate <data_project_name> bq
+```
+
+## Manifolds Configuration
+
+### Dimensions
+
+Dimensions are fields that describe the context of the data. They are typically used to segment and filter data in reports.
+
+```yaml
+dimensions:
+  - name: user_id
+    type: STRING
+  - name: date
+    type: DATE
+```
+
+### Metrics
+
+Metrics are fields that contain numerical data that can be aggregated. They are typically used to measure performance or other quantitative data.
+
+#### Example
+
+```yaml
+metrics:
+  - name: Pageviews
+    id:
+      field: pageId
+      type: STRING
+    interval:
+      type: TIMESTAMP
+      expression: TIMESTAMP_TRUNC(timestamp, HOUR)
+    aggregations:
+      - name: pageviews
+        method: count
+      - name: sessions
+        method: distinct
+        field: sessionid
+    source:
+      type: bigquery
+      name: Events.Requests
+      breakouts:
+        - name: us
+          condition: CountryId = 2840
+```
+
+- _Name_: The name of the metric.
+- _ID_: The field that uniquely identifies the metric, along with its type
+- _Interval_: The time interval over which the metric is aggregated
+- _Aggregations_: The distinct used to aggregate the metric
+- _Source_: The source table from which the metric is derived
+- _Breakouts_: Custom segmentations of the metric
 
 ## Contributing
 

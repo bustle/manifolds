@@ -42,7 +42,7 @@ RSpec.describe Manifolds::Services::BigQueryService do
 
     it "writes the dimensions schema to a file" do
       service.generate_dimensions_schema(project_name)
-      expect(File).to have_received(:write).with("./projects/#{project_name}/bq/dimensions.json", anything)
+      expect(File).to have_received(:write).with("./projects/#{project_name}/bq/tables/dimensions.json", anything)
     end
 
     it "logs success message" do
