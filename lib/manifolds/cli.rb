@@ -31,7 +31,15 @@ module Manifolds
 
       FileUtils.mkdir_p("#{project_path}/tables")
       FileUtils.mkdir_p("#{project_path}/routines")
+      copy_config_template(project_path)
       @logger.info "Added project '#{project_name}' with tables and routines directories."
+    end
+
+    private
+
+    def copy_config_template(project_path)
+      template_path = File.join(File.dirname(__FILE__), "templates", "config_template.yml")
+      FileUtils.cp(template_path, "#{project_path}/config.yml")
     end
   end
 end
