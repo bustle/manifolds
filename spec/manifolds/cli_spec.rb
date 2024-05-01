@@ -24,8 +24,6 @@ RSpec.describe Manifolds::CLI do
   end
 
   describe "#add" do
-    subject(:config_path) { "./projects/#{sub_project_name}/config.yml" }
-
     let(:cli) { described_class.new(logger: null_logger) }
 
     context "when within an umbrella project" do
@@ -53,13 +51,12 @@ RSpec.describe Manifolds::CLI do
       end
 
       it "writes the config.yml file with dimensions" do
-        content = File.read("./projects/#{sub_project_name}/config.yml")
-        expect(content).to include("dimensions")
+        expect(File.read("./projects/#{sub_project_name}/config.yml")).to include("dimensions")
       end
 
       it "writes the config.yml file with metrics" do
-        content = File.read("./projects/#{sub_project_name}/config.yml")
-        expect(content).to include("metrics")
+        config = File.read("./projects/#{sub_project_name}/config.yml")
+        expect(config).to include("metrics")
       end
     end
 
