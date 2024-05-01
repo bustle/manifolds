@@ -9,7 +9,7 @@ RSpec.describe Manifolds::Services::BigQueryService do
     {
       "dimensions" => [
         { "name" => "STRING" },
-        { "directQualified" => "BOOLEAN" }
+        { "flag" => "BOOLEAN" }
       ]
     }
   end
