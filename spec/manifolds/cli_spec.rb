@@ -8,6 +8,7 @@ RSpec.describe Manifolds::CLI do
   let(:project_name) { "commerce" }
   let(:sub_project_name) { "Pages" }
   let(:null_logger) { Logger.new(File::NULL) }
+  let(:bq_service) { instance_double("Manifolds::Services::BigQueryService", "commerce") }
 
   describe "#init" do
     subject(:cli) { described_class.new(logger: null_logger) }
@@ -68,6 +69,20 @@ RSpec.describe Manifolds::CLI do
           cli_with_stdout.add("Pages")
         end.to output(/Not inside a Manifolds umbrella project./).to_stdout
       end
+    end
+  end
+
+  describe "#generate" do
+    subject(:cli) { described_class.new(logger: null_logger) }
+
+    before do
+      allow(Manifolds::Services::BigQueryService).to receive(:new).and_return(bq_service)
+      allow(bq_service).to receive(:generate_dimensions_schema)
+    end
+
+    it "calls generate_dimensions_schema on bq service with correct project name" do
+      cli.generate("Pages", "bq")
+      expect(bq_service).to have_received(:generate_dimensions_schema).with("Pages")
     end
   end
 end
