@@ -4,7 +4,7 @@ RSpec.describe Manifolds::Services::BigQueryService do
   let(:logger) { instance_double("Logger") }
   let(:service) { described_class.new(logger) }
   let(:project_name) { "test_project" }
-  let(:config_path) { "./projects/#{project_name}/config.yml" }
+  let(:config_path) { "./projects/#{project_name}/manifold.yml" }
   let(:config) do
     {
       "dimensions" => [

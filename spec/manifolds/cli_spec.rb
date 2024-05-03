@@ -47,16 +47,16 @@ RSpec.describe Manifolds::CLI do
         expect(Dir.exist?("./projects/#{sub_project_name}/routines")).to be true
       end
 
-      it "creates a config.yml file" do
-        expect(File.exist?("./projects/#{sub_project_name}/config.yml")).to be true
+      it "creates a manifold.yml file" do
+        expect(File.exist?("./projects/#{sub_project_name}/manifold.yml")).to be true
       end
 
-      it "writes the config.yml file with dimensions" do
-        expect(File.read("./projects/#{sub_project_name}/config.yml")).to include("dimensions")
+      it "writes the manifold.yml file with dimensions" do
+        expect(File.read("./projects/#{sub_project_name}/manifold.yml")).to include("dimensions")
       end
 
-      it "writes the config.yml file with metrics" do
-        config = File.read("./projects/#{sub_project_name}/config.yml")
+      it "writes the manifold.yml file with metrics" do
+        config = File.read("./projects/#{sub_project_name}/manifold.yml")
         expect(config).to include("metrics")
       end
     end

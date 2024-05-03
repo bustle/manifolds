@@ -12,7 +12,7 @@ module Manifolds
       end
 
       def generate_dimensions_schema(project_name)
-        config_path = "./projects/#{project_name}/config.yml"
+        config_path = "./projects/#{project_name}/manifold.yml"
         return unless validate_config_exists(config_path, project_name)
 
         config = YAML.load_file(config_path)

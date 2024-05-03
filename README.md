@@ -49,7 +49,7 @@ manifolds init <project_name>
 
 2. **Add a New Data Project**
 
-Add a new data project under the umbrella. This setup includes creating a directory for the data project and initializing with a template `config.yml` file.
+Add a new data project under the umbrella. This setup includes creating a directory for the data project and initializing with a template `manifold.yml` file.
 
 ```bash
 cd <project_name>
@@ -58,7 +58,7 @@ manifolds add <data_project_name>
 
 3. **Generate BigQuery Resource Definitions**
 
-After you fill out the config.yml file, this command generates the necessary BigQuery schema files based on the specified dimensions and metrics.
+After you fill out the manifold.yml file, this command generates the necessary BigQuery schema files based on the specified dimensions and metrics.
 
 ```bash
 manifolds generate <data_project_name> bq

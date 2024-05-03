@@ -53,7 +53,7 @@ module Manifolds
 
     def copy_config_template(project_path)
       template_path = File.join(File.dirname(__FILE__), "templates", "config_template.yml")
-      FileUtils.cp(template_path, "#{project_path}/config.yml")
+      FileUtils.cp(template_path, "#{project_path}/manifold.yml")
     end
   end
 end
