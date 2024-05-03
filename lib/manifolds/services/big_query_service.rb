@@ -31,8 +31,19 @@ module Manifolds
       end
 
       def extract_dimensions(config)
-        config["dimensions"].map do |dim|
-          { "type" => dim.values.first.upcase, "name" => dim.keys.first, "mode" => "NULLABLE" }
+        config["dimensions"].map do |dimension|
+          field_name, details = dimension.first
+          if details.is_a?(Hash)
+            { "type" => "RECORD", "name" => field_name, "mode" => "REPEATED", "fields" => extract_fields(details) }
+          else
+            { "type" => details.upcase, "name" => field_name, "mode" => "NULLABLE" }
+          end
+        end
+      end
+
+      def extract_fields(fields_hash)
+        fields_hash.map do |name, type|
+          { "type" => type.upcase, "name" => name, "mode" => "NULLABLE" }
         end
       end
 
