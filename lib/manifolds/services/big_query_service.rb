@@ -12,11 +12,11 @@ module Manifolds
       end
 
       def generate_dimensions_schema(project_name)
-        config_path = "./projects/#{project_name}/config.yml"
+        config_path = "./projects/#{project_name}/manifold.yml"
         return unless validate_config_exists(config_path, project_name)
 
         config = YAML.load_file(config_path)
-        dimensions = extract_dimensions(config)
+        dimensions = extract_dimensions(config["dimensions"])
         create_dimensions_file(project_name, dimensions)
       end
 
@@ -30,9 +30,19 @@ module Manifolds
         true
       end
 
-      def extract_dimensions(config)
-        config["dimensions"].map do |dim|
-          { "type" => dim.values.first.upcase, "name" => dim.keys.first, "mode" => "NULLABLE" }
+      def extract_dimensions(dimensions_hash)
+        dimensions_hash.map do |dimension|
+          extract_fields(dimension)
+        end
+      end
+
+      def extract_fields(fields_hash, mode = "NULLABLE")
+        fields_hash.map do |name, type|
+          if type.is_a?(Hash)
+            { "type" => "RECORD", "name" => name, "fields" => extract_fields(type) }
+          elsif type
+            { "type" => type.upcase, "name" => name, "mode" => mode }
+          end
         end
       end
 
