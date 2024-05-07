@@ -34,7 +34,7 @@ module Manifolds
         config["dimensions"].map do |dimension|
           field_name, details = dimension.first
           if details.is_a?(Hash)
-            { "type" => "RECORD", "name" => field_name, "mode" => "REPEATED", "fields" => extract_fields(details) }
+            { "type" => "RECORD", "name" => field_name, "fields" => extract_fields(details) }
           else
             { "type" => details.upcase, "name" => field_name, "mode" => "NULLABLE" }
           end
