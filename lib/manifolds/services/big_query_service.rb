@@ -16,7 +16,7 @@ module Manifolds
         return unless validate_config_exists(config_path, project_name)
 
         config = YAML.load_file(config_path)
-        dimensions = extract_dimensions(config)
+        dimensions = extract_fields(config["dimensions"])
         create_dimensions_file(project_name, dimensions)
       end
 
@@ -30,20 +30,13 @@ module Manifolds
         true
       end
 
-      def extract_dimensions(config)
-        config["dimensions"].map do |dimension|
-          field_name, details = dimension.first
-          if details.is_a?(Hash)
-            { "type" => "RECORD", "name" => field_name, "fields" => extract_fields(details) }
-          else
-            { "type" => details.upcase, "name" => field_name, "mode" => "NULLABLE" }
-          end
-        end
-      end
-
-      def extract_fields(fields_hash)
+      def extract_fields(fields_hash, mode = "NULLABLE")
         fields_hash.map do |name, type|
-          { "type" => type.upcase, "name" => name, "mode" => "NULLABLE" }
+          if type.is_a?(Hash)
+            { "type" => "RECORD", "name" => name, "fields" => extract_fields(type) }
+          else
+            { "type" => type.upcase, "name" => name, "mode" => mode }
+          end
         end
       end
 

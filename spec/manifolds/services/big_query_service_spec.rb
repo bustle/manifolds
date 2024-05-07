@@ -7,10 +7,17 @@ RSpec.describe Manifolds::Services::BigQueryService do
   let(:config_path) { "./projects/#{project_name}/manifold.yml" }
   let(:config) do
     {
-      "dimensions" => [
-        { "name" => "STRING" },
-        { "flag" => "BOOLEAN" }
-      ]
+      "dimensions" => {
+        "context" => {
+          "site" => "STRING",
+          "user" => {
+            "id" => "INTEGER",
+            "preferences" => {
+              "notifications" => "BOOLEAN"
+            }
+          }
+        }
+      }
     }
   end
 
