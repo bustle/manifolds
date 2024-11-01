@@ -10,7 +10,10 @@ module Manifolds
   # CLI provides command line interface functionality
   # for creating and managing umbrella projects for data management.
   class CLI < Thor
+    package_name "Manifolds"
+
     def initialize(*args, logger: Logger.new($stdout))
+      raise "ASD"
       super(*args)
       @logger = logger
       @logger.level = Logger::INFO
@@ -18,16 +21,17 @@ module Manifolds
       @bq_service = Services::BigQueryService.new(@logger)
     end
 
-    desc "init NAME", "Generate a new umbrella project for data management"
-    def init(name)
-      directory_path = "./#{name}/projects"
+    desc "new PROJECT_NAME", "Generate a new project for managing manifolds"
+    def new(name)
+      p "HELLO"
+      directory_path = File.join(Dir.pwd, name, :projects)
       FileUtils.mkdir_p(directory_path)
       @logger.info "Created umbrella project '#{name}' with a projects directory."
     end
 
-    desc "add PROJECT_NAME", "Add a new project within the current umbrella project"
-    def add(project_name)
-      project_path = "./projects/#{project_name}"
+    desc "add MANIFOLD_NAME", "Add a new project within the current umbrella project"
+    def create(name)
+      project_path = "./projects/#{name}"
       unless Dir.exist?("./projects")
         @logger.error("Not inside a Manifolds umbrella project.")
         return

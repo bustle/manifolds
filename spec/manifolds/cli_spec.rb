@@ -24,14 +24,14 @@ RSpec.describe Manifolds::CLI do
     end
   end
 
-  describe "#add" do
+  describe "#new" do
     let(:cli) { described_class.new(logger: null_logger) }
 
     context "when within an umbrella project" do
       before do
         FileUtils.mkdir_p("#{project_name}/projects") # Simulate an umbrella project
         Dir.chdir(project_name)
-        cli.add(sub_project_name)
+        cli.new(sub_project_name)
       end
 
       after do
@@ -66,7 +66,7 @@ RSpec.describe Manifolds::CLI do
 
       it "does not allow adding projects and logs an error" do
         expect do
-          cli_with_stdout.add("Pages")
+          cli_with_stdout.new("Pages")
         end.to output(/Not inside a Manifolds umbrella project./).to_stdout
       end
     end

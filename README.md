@@ -53,7 +53,7 @@ Add a new data project under the umbrella. This setup includes creating a direct
 
 ```bash
 cd <project_name>
-manifolds add <data_project_name>
+manifolds new <data_project_name>
 ```
 
 3. **Generate BigQuery Resource Definitions**
