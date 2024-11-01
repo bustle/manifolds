@@ -3,6 +3,7 @@
 require "thor"
 require "fileutils"
 require "logger"
+require "debug"
 
 require_relative "services/big_query_service"
 
@@ -12,26 +13,25 @@ module Manifolds
   class CLI < Thor
     package_name "Manifolds"
 
-    def initialize(*args, logger: Logger.new($stdout))
-      raise "ASD"
-      super(*args)
-      @logger = logger
-      @logger.level = Logger::INFO
+    attr_accessor :logger, :bq_service
 
-      @bq_service = Services::BigQueryService.new(@logger)
+    def initialize(*args, logger: Logger.new($stdout))
+      super(*args)
+      self.logger = logger
+      self.logger.level = Logger::INFO
+      self.bq_service = Services::BigQueryService.new(logger)
     end
 
     desc "new PROJECT_NAME", "Generate a new project for managing manifolds"
-    def new(name)
-      p "HELLO"
-      directory_path = File.join(Dir.pwd, name, :projects)
+    def new(project_name)
+      directory_path = File.join(Dir.pwd, project_name, "projects")
       FileUtils.mkdir_p(directory_path)
-      @logger.info "Created umbrella project '#{name}' with a projects directory."
+      logger.info "Created new manifolds project '#{project_name}'."
     end
 
     desc "add MANIFOLD_NAME", "Add a new project within the current umbrella project"
-    def create(name)
-      project_path = "./projects/#{name}"
+    def create(manifold_name)
+      project_path = "./projects/#{manifold_name}"
       unless Dir.exist?("./projects")
         @logger.error("Not inside a Manifolds umbrella project.")
         return
@@ -40,7 +40,7 @@ module Manifolds
       FileUtils.mkdir_p("#{project_path}/tables")
       FileUtils.mkdir_p("#{project_path}/routines")
       copy_config_template(project_path)
-      @logger.info "Added project '#{project_name}' with tables and routines directories."
+      @logger.info "Added project '#{manifold_name}' with tables and routines directories."
     end
 
     desc "generate PROJECT_NAME SERVICE", "Generate services for a project"

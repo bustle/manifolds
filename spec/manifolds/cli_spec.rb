@@ -10,28 +10,26 @@ RSpec.describe Manifolds::CLI do
   let(:null_logger) { Logger.new(File::NULL) }
   let(:bq_service) { instance_double("Manifolds::Services::BigQueryService", "commerce") }
 
-  describe "#init" do
+  describe "#new" do
     subject(:cli) { described_class.new(logger: null_logger) }
 
     before do
-      allow(FileUtils).to receive(:mkdir_p)
-      allow(File).to receive(:open)
-      cli.init(project_name)
+      # allow(FileUtils).to receive(:mkdir_p)
+      # allow(File).to receive(:open)
+      cli.new(project_name)
     end
 
-    it "creates the projects directory" do
-      expect(FileUtils).to have_received(:mkdir_p).with("./#{project_name}/projects")
-    end
+    it { expect(Pathname.new(File.join(Dir.pwd, project_name, "projects"))).to be_directory }
   end
 
-  describe "#new" do
+  describe "#create" do
     let(:cli) { described_class.new(logger: null_logger) }
 
     context "when within an umbrella project" do
       before do
         FileUtils.mkdir_p("#{project_name}/projects") # Simulate an umbrella project
         Dir.chdir(project_name)
-        cli.new(sub_project_name)
+        cli.create(sub_project_name)
       end
 
       after do
@@ -66,7 +64,7 @@ RSpec.describe Manifolds::CLI do
 
       it "does not allow adding projects and logs an error" do
         expect do
-          cli_with_stdout.new("Pages")
+          cli_with_stdout.create("Pages")
         end.to output(/Not inside a Manifolds umbrella project./).to_stdout
       end
     end
