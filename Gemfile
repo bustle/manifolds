@@ -2,6 +2,7 @@
 
 source "https://rubygems.org"
 
+gem "logger"
 gem "thor"
 
 group :development do
@@ -11,4 +12,7 @@ end
 
 group :development, :test do
   gem "rspec"
+  gem "simplecov"
+  gem "simplecov-json"
+  gem "simplecov-lcov"
 end
