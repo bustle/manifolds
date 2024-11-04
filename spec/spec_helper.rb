@@ -1,31 +1,32 @@
-require 'simplecov'
-require 'simplecov-json'
-require 'simplecov-lcov'
+# frozen_string_literal: true
+
+require "simplecov"
+require "simplecov-json"
+require "simplecov-lcov"
 
 SimpleCov::Formatter::LcovFormatter.config do |c|
   c.report_with_single_file = true
-  c.single_report_path = 'coverage/lcov.info'
+  c.single_report_path = "coverage/lcov.info"
 end
 
 SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new([
-  SimpleCov::Formatter::HTMLFormatter,
-  SimpleCov::Formatter::JSONFormatter,
-  SimpleCov::Formatter::LcovFormatter
-])
+                                                                  SimpleCov::Formatter::HTMLFormatter,
+                                                                  SimpleCov::Formatter::JSONFormatter,
+                                                                  SimpleCov::Formatter::LcovFormatter
+                                                                ])
 
 SimpleCov.start do
-  add_filter '/spec/'
-  add_filter '/vendor/'
-  
+  add_filter "/spec/"
+  add_filter "/vendor/"
+
   # Track all directories containing source code
-  add_group 'Commands', 'lib/manifolds/commands'
-  add_group 'Models', 'lib/manifolds/models'
-  add_group 'Utils', 'lib/manifolds/utils'
-  
+  add_group "Manifolds", "lib/manifolds"
+  add_group "Services", "lib/manifolds/services"
+
   # Set the minimum coverage percentage
   minimum_coverage 100
   minimum_coverage_by_file 100
-  
+
   # Fail the build if coverage drops below threshold
   refuse_coverage_drop
 end
