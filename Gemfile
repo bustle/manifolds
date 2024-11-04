@@ -11,6 +11,7 @@ group :development do
 end
 
 group :development, :test do
+  gem "fakefs"
   gem "rspec"
   gem "simplecov"
   gem "simplecov-json"

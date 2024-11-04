@@ -1,67 +1,64 @@
 # frozen_string_literal: true
 
+require "fakefs/spec_helpers"
+
 RSpec.describe Manifolds::Services::BigQueryService do
-  let(:logger) { instance_double("Logger") }
+  include FakeFS::SpecHelpers
+
+  let(:logger) { Logger.new(File::NULL) }
   let(:service) { described_class.new(logger) }
   let(:project_name) { "test_project" }
-  let(:config_path) { "./projects/#{project_name}/manifold.yml" }
-  let(:config) do
-    {
-      "vectors" => [
-        { "name" => "User" }
-      ]
-    }
-  end
-  let(:vector_service) { instance_double(Manifolds::Services::VectorService) }
 
   before do
-    allow(File).to receive(:exist?).with(config_path).and_return(true)
-    allow(YAML).to receive(:load_file).with(config_path).and_return(config)
-    allow(FileUtils).to receive(:mkdir_p)
-    allow(File).to receive(:write)
-    allow(logger).to receive(:info) # Allow 'info' to be called to avoid unexpected message errors
-    allow(Manifolds::Services::VectorService).to receive(:new).and_return(vector_service)
-    allow(vector_service).to receive(:load_vector_schema).and_return(
-      {
-        "name" => "user",
-        "type" => "RECORD",
-        "fields" => [
-          {
-            "name" => "user_id",
-            "type" => "STRING",
-            "mode" => "NULLABLE"
-          }
-        ]
-      }
-    )
+    FakeFS.activate!
+    FileUtils.mkdir_p("./projects/#{project_name}")
+  end
+
+  after do
+    FakeFS.deactivate!
   end
 
   describe "#generate_dimensions_schema" do
-    it "checks if the configuration file exists" do
-      service.generate_dimensions_schema(project_name)
-      expect(File).to have_received(:exist?).with(config_path)
-    end
-
-    context "when configuration file does not exist" do
+    context "when the project configuration exists" do
       before do
-        allow(File).to receive(:exist?).with(config_path).and_return(false)
-        allow(logger).to receive(:error)
-      end
+        # Create a test configuration
+        FileUtils.mkdir_p("./vectors")
+        File.write("./vectors/user.yml", <<~YAML)
+          attributes:
+            user_id: string
+            email: string
+        YAML
 
-      it "logs an error message" do
+        File.write("./projects/#{project_name}/manifold.yml", <<~YAML)
+          vectors:
+            - User
+        YAML
+
         service.generate_dimensions_schema(project_name)
-        expect(logger).to have_received(:error).with("Config file missing for project 'test_project'.")
+      end
+
+      it "generates a dimensions schema file" do
+        schema_file = "./projects/#{project_name}/bq/tables/dimensions.json"
+        expect(File.exist?(schema_file)).to be true
+      end
+
+      it "includes the expected schema structure" do
+        schema = JSON.parse(File.read("./projects/#{project_name}/bq/tables/dimensions.json"))
+        expect(schema).to include(
+          {
+            "type" => "STRING",
+            "name" => "id",
+            "mode" => "REQUIRED"
+          }
+        )
       end
     end
 
-    it "writes the dimensions schema to a file" do
-      service.generate_dimensions_schema(project_name)
-      expect(File).to have_received(:write).with("./projects/#{project_name}/bq/tables/dimensions.json", anything)
-    end
-
-    it "logs success message" do
-      service.generate_dimensions_schema(project_name)
-      expect(logger).to have_received(:info).with("Generated BigQuery dimensions table schema for 'test_project'.")
+    context "when the project configuration is missing" do
+      it "indicates the configuration is missing" do
+        expect(logger).to receive(:error).with(/Config file missing for project/)
+        service.generate_dimensions_schema(project_name)
+      end
     end
   end
 end

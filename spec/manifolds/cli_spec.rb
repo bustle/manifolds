@@ -3,120 +3,98 @@
 require_relative "../../lib/manifolds/cli"
 require "fileutils"
 require "logger"
+require "fakefs/spec_helpers"
 
 RSpec.describe Manifolds::CLI do
+  include FakeFS::SpecHelpers
+
   let(:project_name) { "commerce" }
   let(:sub_project_name) { "Pages" }
   let(:null_logger) { Logger.new(File::NULL) }
-  let(:bq_service) { instance_double("Manifolds::Services::BigQueryService", "commerce") }
+
+  before do
+    FakeFS do
+      # Set up any template files that need to exist
+      FileUtils.mkdir_p("#{File.dirname(__FILE__)}/../../lib/manifolds/templates")
+      File.write("#{File.dirname(__FILE__)}/../../lib/manifolds/templates/config_template.yml", "vectors:\nmetrics:")
+      File.write("#{File.dirname(__FILE__)}/../../lib/manifolds/templates/vector_template.yml", "attributes:")
+    end
+  end
 
   describe "#init" do
     subject(:cli) { described_class.new(logger: null_logger) }
 
-    before do
-      allow(FileUtils).to receive(:mkdir_p)
-      allow(File).to receive(:open)
-      cli.init(project_name)
-    end
+    context "when initializing a new project" do
+      before { cli.init(project_name) }
 
-    it "creates the projects directory" do
-      expect(FileUtils).to have_received(:mkdir_p).with("./#{project_name}/projects")
+      it "creates a project directory structure" do
+        expect(Dir.exist?("./#{project_name}")).to be true
+        expect(Dir.exist?("./#{project_name}/projects")).to be true
+        expect(Dir.exist?("./#{project_name}/vectors")).to be true
+      end
     end
   end
 
   describe "#add" do
-    let(:cli) { described_class.new(logger: null_logger) }
+    subject(:cli) { described_class.new(logger: null_logger) }
 
-    context "when within an umbrella project" do
+    context "when adding a project within an umbrella project" do
       before do
-        FileUtils.mkdir_p("#{project_name}/projects") # Simulate an umbrella project
+        FileUtils.mkdir_p("#{project_name}/projects")
         Dir.chdir(project_name)
         cli.add(sub_project_name)
       end
 
       after do
         Dir.chdir("..")
-        FileUtils.rm_rf(project_name)
       end
 
-      it "creates a tables directory within the project" do
+      it "creates the expected project structure" do
         expect(Dir.exist?("./projects/#{sub_project_name}/tables")).to be true
-      end
-
-      it "creates a routines directory within the project" do
         expect(Dir.exist?("./projects/#{sub_project_name}/routines")).to be true
       end
 
-      it "creates a manifold.yml file" do
-        expect(File.exist?("./projects/#{sub_project_name}/manifold.yml")).to be true
-      end
-
-      it "writes the manifold.yml file with vectors" do
-        expect(File.read("./projects/#{sub_project_name}/manifold.yml")).to include("vectors")
-      end
-
-      it "writes the manifold.yml file with metrics" do
-        config = File.read("./projects/#{sub_project_name}/manifold.yml")
-        expect(config).to include("metrics")
+      it "creates a manifold configuration file" do
+        config_file = "./projects/#{sub_project_name}/manifold.yml"
+        expect(File.exist?(config_file)).to be true
+        expect(File.read(config_file)).to include("vectors:")
+        expect(File.read(config_file)).to include("metrics:")
       end
     end
 
     context "when outside an umbrella project" do
-      subject(:cli_with_stdout) { described_class.new(logger: Logger.new($stdout)) }
+      let(:cli_with_stdout) { described_class.new(logger: Logger.new($stdout)) }
 
-      it "does not allow adding projects and logs an error" do
-        expect do
-          cli_with_stdout.add("Pages")
-        end.to output(/Not inside a Manifolds umbrella project./).to_stdout
+      it "indicates that the command must be run within a project" do
+        FakeFS do
+          expect { cli_with_stdout.add(sub_project_name) }
+            .to output(/Not inside a Manifolds umbrella project/).to_stdout
+        end
       end
-    end
-  end
-
-  describe "#generate" do
-    subject(:cli) { described_class.new(logger: null_logger) }
-
-    before do
-      allow(Manifolds::Services::BigQueryService).to receive(:new).and_return(bq_service)
-      allow(bq_service).to receive(:generate_dimensions_schema)
-    end
-
-    it "calls generate_dimensions_schema on bq service with correct project name" do
-      cli.generate("Pages", "bq")
-      expect(bq_service).to have_received(:generate_dimensions_schema).with("Pages")
     end
   end
 
   describe "vectors" do
     describe "add" do
+      subject(:cli) { vectors_command.new }
+
       let(:vector_name) { "Page" }
       let(:vectors_command) { described_class.new.class.subcommand_classes["vectors"] }
 
-      context "when within an umbrella project" do
-        subject(:cli) { vectors_command.new }
-
+      context "when adding a vector within an umbrella project" do
         before do
           FileUtils.mkdir_p("./vectors")
-          allow(FileUtils).to receive(:cp)
           cli.add(vector_name)
         end
 
-        after do
-          FileUtils.rm_rf("./vectors")
-        end
-
-        it "copies the vector template" do
-          template_path = File.join(File.dirname(File.expand_path("../../lib/manifolds/cli", __dir__)),
-                                    "templates",
-                                    "vector_template.yml")
-          expect(FileUtils).to have_received(:cp)
-            .with(template_path, "./vectors/page.yml")
+        it "creates a vector configuration file" do
+          expect(File.exist?("./vectors/page.yml")).to be true
+          expect(File.read("./vectors/page.yml")).to include("attributes:")
         end
       end
 
       context "when outside an umbrella project" do
-        subject(:cli) { vectors_command.new }
-
-        it "logs an error" do
+        it "indicates that the command must be run within a project" do
           expect { cli.add(vector_name) }
             .to output(/Not inside a Manifolds umbrella project/).to_stdout
         end

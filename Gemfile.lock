@@ -4,6 +4,7 @@ GEM
     ast (2.4.2)
     diff-lcs (1.5.1)
     docile (1.4.1)
+    fakefs (2.5.0)
     json (2.7.2)
     language_server-protocol (3.17.0.3)
     logger (1.6.1)
@@ -71,6 +72,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  fakefs
   logger
   rspec
   rubocop
