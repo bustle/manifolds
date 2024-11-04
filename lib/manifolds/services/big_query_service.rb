@@ -21,7 +21,8 @@ module Manifolds
 
         # Load vector schemas
         config["vectors"]&.each do |vector|
-          vector_schema = @vector_service.load_vector_schema(vector["name"])
+          @logger.info("Loading vector schema for '#{vector}'.")
+          vector_schema = @vector_service.load_vector_schema(vector)
           dimensions.concat(vector_schema) if vector_schema
         end
 
