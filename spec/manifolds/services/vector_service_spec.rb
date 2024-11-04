@@ -24,11 +24,17 @@ RSpec.describe Manifolds::Services::VectorService do
 
     it "loads and transforms vector schema" do
       schema = service.load_vector_schema(vector_name)
-      expect(schema).to eq([
-                             { "name" => "id", "type" => "STRING", "mode" => "NULLABLE" },
-                             { "name" => "url", "type" => "STRING", "mode" => "NULLABLE" },
-                             { "name" => "created_at", "type" => "TIMESTAMP", "mode" => "NULLABLE" }
-                           ])
+      expect(schema).to eq(
+        {
+          "name" => "page",
+          "type" => "RECORD",
+          "fields" => [
+            { "name" => "id", "type" => "STRING", "mode" => "NULLABLE" },
+            { "name" => "url", "type" => "STRING", "mode" => "NULLABLE" },
+            { "name" => "created_at", "type" => "TIMESTAMP", "mode" => "NULLABLE" }
+          ]
+        }
+      )
     end
 
     context "when vector file doesn't exist" do

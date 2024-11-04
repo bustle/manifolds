@@ -17,7 +17,8 @@ module Manifolds
         end
 
         config = YAML.load_file(path)
-        transform_attributes_to_schema(config["attributes"])
+        fields = transform_attributes_to_schema(config["attributes"])
+        { "name" => vector_name.downcase, "type" => "RECORD", "fields" => fields }
       end
 
       private

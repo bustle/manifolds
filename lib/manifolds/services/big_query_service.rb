@@ -23,7 +23,7 @@ module Manifolds
         config["vectors"]&.each do |vector|
           @logger.info("Loading vector schema for '#{vector}'.")
           vector_schema = @vector_service.load_vector_schema(vector)
-          dimensions.concat(vector_schema) if vector_schema
+          dimensions << vector_schema if vector_schema
         end
 
         create_dimensions_file(project_name, dimensions)

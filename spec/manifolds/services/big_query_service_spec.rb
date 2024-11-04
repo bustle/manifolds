@@ -21,13 +21,19 @@ RSpec.describe Manifolds::Services::BigQueryService do
     allow(File).to receive(:write)
     allow(logger).to receive(:info) # Allow 'info' to be called to avoid unexpected message errors
     allow(Manifolds::Services::VectorService).to receive(:new).and_return(vector_service)
-    allow(vector_service).to receive(:load_vector_schema).and_return([
-                                                                       {
-                                                                         "name" => "user_id",
-                                                                         "type" => "STRING",
-                                                                         "mode" => "NULLABLE"
-                                                                       }
-                                                                     ])
+    allow(vector_service).to receive(:load_vector_schema).and_return(
+      {
+        "name" => "user",
+        "type" => "RECORD",
+        "fields" => [
+          {
+            "name" => "user_id",
+            "type" => "STRING",
+            "mode" => "NULLABLE"
+          }
+        ]
+      }
+    )
   end
 
   describe "#generate_dimensions_schema" do
