@@ -3,6 +3,18 @@ require: rubocop-rspec
 AllCops:
   TargetRubyVersion: 3.0
 
+RSpec/ExampleLength:
+  Max: 18 # or set to `Enabled: false` to disable completely
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 4 # Increase to your desired nesting level (currently, it’s set to 4 in the example)
+
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
@@ -10,13 +22,4 @@ Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
 
 Style/Documentation:
-  Enabled: false
-
-RSpec/MultipleMemoizedHelpers:
-  Enabled: false
-
-RSpec/ExampleLength:
-  Max: 18 # or set to `Enabled: false` to disable completely
-
-RSpec/MultipleExpectations:
   Enabled: false

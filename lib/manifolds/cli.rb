@@ -5,7 +5,7 @@ require "fileutils"
 require "logger"
 
 require_relative "services/big_query_service"
-require_relative "services/entity_service"
+require_relative "services/vector_service"
 
 module Manifolds
   # CLI provides command line interface functionality
@@ -21,10 +21,41 @@ module Manifolds
 
     desc "init NAME", "Generate a new umbrella project for data management"
     def init(name)
-      directory_path = "./#{name}/projects"
-      FileUtils.mkdir_p(directory_path)
-      @logger.info "Created umbrella project '#{name}' with a projects directory."
+      directory_path = "./#{name}"
+      FileUtils.mkdir_p("#{directory_path}/projects")
+      FileUtils.mkdir_p("#{directory_path}/vectors")
+      @logger.info "Created umbrella project '#{name}' with projects and vectors directories."
     end
+
+    desc "vectors SUBCOMMAND ...ARGS", "Manage vectors"
+    subcommand "vectors", Class.new(Thor) {
+      namespace :vectors
+
+      def initialize(*args)
+        super
+        @logger = Logger.new($stdout)
+        @logger.level = Logger::INFO
+      end
+
+      desc "add VECTOR_NAME", "Add a new vector configuration"
+      def add(name)
+        unless Dir.exist?("./vectors")
+          @logger.error("Not inside a Manifolds umbrella project.")
+          return
+        end
+
+        vector_path = "./vectors/#{name.downcase}.yml"
+        copy_vector_template(vector_path)
+        @logger.info "Created vector configuration for '#{name}'."
+      end
+
+      private
+
+      def copy_vector_template(vector_path)
+        template_path = File.join(File.dirname(__FILE__), "templates", "vector_template.yml")
+        FileUtils.cp(template_path, vector_path)
+      end
+    }
 
     desc "add PROJECT_NAME", "Add a new project within the current umbrella project"
     def add(project_name)
@@ -50,31 +81,11 @@ module Manifolds
       end
     end
 
-    desc "entity NAME", "Create a new entity configuration"
-    def entity(name)
-      unless Dir.exist?("./projects")
-        @logger.error("Not inside a Manifolds umbrella project.")
-        return
-      end
-
-      entity_dir = "./projects/entities"
-      FileUtils.mkdir_p(entity_dir)
-
-      entity_path = "#{entity_dir}/#{name.downcase}.yml"
-      copy_entity_template(entity_path)
-      @logger.info "Created entity configuration for '#{name}'."
-    end
-
     private
 
     def copy_config_template(project_path)
       template_path = File.join(File.dirname(__FILE__), "templates", "config_template.yml")
       FileUtils.cp(template_path, "#{project_path}/manifold.yml")
-    end
-
-    def copy_entity_template(entity_path)
-      template_path = File.join(File.dirname(__FILE__), "templates", "entity_template.yml")
-      FileUtils.cp(template_path, entity_path)
     end
   end
 end

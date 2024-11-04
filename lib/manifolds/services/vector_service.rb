@@ -4,15 +4,15 @@ require "yaml"
 
 module Manifolds
   module Services
-    class EntityService
+    class VectorService
       def initialize(logger)
         @logger = logger
       end
 
-      def load_entity_schema(entity_name)
-        path = "./projects/entities/#{entity_name.downcase}.yml"
+      def load_vector_schema(vector_name)
+        path = "./vectors/#{vector_name.downcase}.yml"
         unless File.exist?(path)
-          @logger.error("Entity configuration not found: #{path}")
+          @logger.error("Vector configuration not found: #{path}")
           return nil
         end
 

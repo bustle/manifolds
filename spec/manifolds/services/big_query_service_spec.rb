@@ -7,12 +7,12 @@ RSpec.describe Manifolds::Services::BigQueryService do
   let(:config_path) { "./projects/#{project_name}/manifold.yml" }
   let(:config) do
     {
-      "entities" => [
+      "vectors" => [
         { "name" => "User" }
       ]
     }
   end
-  let(:entity_service) { instance_double(Manifolds::Services::EntityService) }
+  let(:vector_service) { instance_double(Manifolds::Services::VectorService) }
 
   before do
     allow(File).to receive(:exist?).with(config_path).and_return(true)
@@ -20,8 +20,8 @@ RSpec.describe Manifolds::Services::BigQueryService do
     allow(FileUtils).to receive(:mkdir_p)
     allow(File).to receive(:write)
     allow(logger).to receive(:info) # Allow 'info' to be called to avoid unexpected message errors
-    allow(Manifolds::Services::EntityService).to receive(:new).and_return(entity_service)
-    allow(entity_service).to receive(:load_entity_schema).and_return([
+    allow(Manifolds::Services::VectorService).to receive(:new).and_return(vector_service)
+    allow(vector_service).to receive(:load_vector_schema).and_return([
                                                                        {
                                                                          "name" => "user_id",
                                                                          "type" => "STRING",

@@ -1,5 +1,5 @@
-entities:
-  # List the entities you want to include in this manifold
+vectors:
+  # List the vectors you want to include in this manifold
   # Example:
   # - User
 
@@ -7,7 +7,7 @@ metrics:
   - name: # Add your metric name here, e.g. Pageviews
 
     id:
-      field: # Identify the field that uniquely identifies each manifold entity
+      field: # Identify the field that uniquely identifies each manifold vector
       type: # Specify the type of that field, e.g. INTEGER
 
     interval:

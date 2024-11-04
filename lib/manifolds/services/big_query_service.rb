@@ -9,7 +9,7 @@ module Manifolds
     class BigQueryService
       def initialize(logger)
         @logger = logger
-        @entity_service = Manifolds::Services::EntityService.new(logger)
+        @vector_service = Manifolds::Services::VectorService.new(logger)
       end
 
       def generate_dimensions_schema(project_name)
@@ -19,10 +19,10 @@ module Manifolds
         config = YAML.load_file(config_path)
         dimensions = []
 
-        # Load entity schemas
-        config["entities"]&.each do |entity|
-          entity_schema = @entity_service.load_entity_schema(entity["name"])
-          dimensions.concat(entity_schema) if entity_schema
+        # Load vector schemas
+        config["vectors"]&.each do |vector|
+          vector_schema = @vector_service.load_vector_schema(vector["name"])
+          dimensions.concat(vector_schema) if vector_schema
         end
 
         create_dimensions_file(project_name, dimensions)
