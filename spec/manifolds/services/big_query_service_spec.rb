@@ -5,7 +5,7 @@ require "fakefs/spec_helpers"
 RSpec.describe Manifolds::Services::BigQueryService do
   include FakeFS::SpecHelpers
 
-  let(:logger) { Logger.new(File::NULL) }
+  let(:logger) { instance_spy(Logger) }
   let(:service) { described_class.new(logger) }
   let(:project_name) { "test_project" }
 
@@ -56,8 +56,9 @@ RSpec.describe Manifolds::Services::BigQueryService do
 
     context "when the project configuration is missing" do
       it "indicates the configuration is missing" do
-        expect(logger).to receive(:error).with(/Config file missing for project/)
         service.generate_dimensions_schema(project_name)
+        expect(logger).to have_received(:error)
+          .with(/Config file missing for project/)
       end
     end
   end
