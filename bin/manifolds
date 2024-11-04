@@ -2,6 +2,6 @@
 
 # frozen_string_literal: true
 
-require File.expand_path('../lib/manifolds', __dir__)
+require File.expand_path("../lib/manifolds", __dir__)
 
 Manifolds::CLI.start(ARGV)
