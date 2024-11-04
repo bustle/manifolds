@@ -75,6 +75,12 @@ vectors:
   - page
 ```
 
+#### Add a vector to your project
+
+```bash
+manifolds vectors add page
+```
+
 ### Metrics
 
 Metrics are fields that contain numerical data that can be aggregated. They are typically used to measure performance or other quantitative data.
