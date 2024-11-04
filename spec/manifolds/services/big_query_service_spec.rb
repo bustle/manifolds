@@ -7,19 +7,12 @@ RSpec.describe Manifolds::Services::BigQueryService do
   let(:config_path) { "./projects/#{project_name}/manifold.yml" }
   let(:config) do
     {
-      "dimensions" => {
-        "context" => {
-          "site" => "STRING",
-          "user" => {
-            "id" => "INTEGER",
-            "preferences" => {
-              "notifications" => "BOOLEAN"
-            }
-          }
-        }
-      }
+      "entities" => [
+        { "name" => "User" }
+      ]
     }
   end
+  let(:entity_service) { instance_double(Manifolds::Services::EntityService) }
 
   before do
     allow(File).to receive(:exist?).with(config_path).and_return(true)
@@ -27,6 +20,14 @@ RSpec.describe Manifolds::Services::BigQueryService do
     allow(FileUtils).to receive(:mkdir_p)
     allow(File).to receive(:write)
     allow(logger).to receive(:info) # Allow 'info' to be called to avoid unexpected message errors
+    allow(Manifolds::Services::EntityService).to receive(:new).and_return(entity_service)
+    allow(entity_service).to receive(:load_entity_schema).and_return([
+                                                                       {
+                                                                         "name" => "user_id",
+                                                                         "type" => "STRING",
+                                                                         "mode" => "NULLABLE"
+                                                                       }
+                                                                     ])
   end
 
   describe "#generate_dimensions_schema" do

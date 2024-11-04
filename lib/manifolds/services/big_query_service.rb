@@ -9,6 +9,7 @@ module Manifolds
     class BigQueryService
       def initialize(logger)
         @logger = logger
+        @entity_service = Manifolds::Services::EntityService.new(logger)
       end
 
       def generate_dimensions_schema(project_name)
@@ -16,7 +17,14 @@ module Manifolds
         return unless validate_config_exists(config_path, project_name)
 
         config = YAML.load_file(config_path)
-        dimensions = extract_dimensions(config["dimensions"])
+        dimensions = []
+
+        # Load entity schemas
+        config["entities"]&.each do |entity|
+          entity_schema = @entity_service.load_entity_schema(entity["name"])
+          dimensions.concat(entity_schema) if entity_schema
+        end
+
         create_dimensions_file(project_name, dimensions)
       end
 
@@ -28,22 +36,6 @@ module Manifolds
           return false
         end
         true
-      end
-
-      def extract_dimensions(dimensions_hash)
-        dimensions_hash.map do |dimension|
-          extract_fields(dimension)
-        end
-      end
-
-      def extract_fields(fields_hash, mode = "NULLABLE")
-        fields_hash.map do |name, type|
-          if type.is_a?(Hash)
-            { "type" => "RECORD", "name" => name, "fields" => extract_fields(type) }
-          elsif type
-            { "type" => type.upcase, "name" => name, "mode" => mode }
-          end
-        end
       end
 
       def create_dimensions_file(project_name, dimensions)

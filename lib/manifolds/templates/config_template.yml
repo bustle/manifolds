@@ -1,7 +1,7 @@
-dimensions:
-  # Add your dimensions here, e.g.
-  # myName: STRING
-  # myFlag: BOOLEAN
+entities:
+  # List the entities you want to include in this manifold
+  # Example:
+  # - User
 
 metrics:
   - name: # Add your metric name here, e.g. Pageviews
@@ -16,19 +16,10 @@ metrics:
 
     aggregations:
       # Add any aggregations this metric should present
-      # e.g.
-      # - name: impressions
-      #   method: count
 
     source:
       type: BIGQUERY_TABLE
-      project: # Add your project name here, e.g. my-project
-      dataset: # Add your dataset name here, e.g. events
-      table: # Add your table name, e.g. pageviews
+      project: # Add your project name here
+      dataset: # Add your dataset name here
+      table: # Add your table name
       filter: # (optional) Add your filter condition here
-
-    segments:
-      # (optional) Add any custom breakouts for this metric
-      # e.g.
-      # - name: organic
-      #   condition: paid IS FALSE

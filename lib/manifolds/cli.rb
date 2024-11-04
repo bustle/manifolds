@@ -5,6 +5,7 @@ require "fileutils"
 require "logger"
 
 require_relative "services/big_query_service"
+require_relative "services/entity_service"
 
 module Manifolds
   # CLI provides command line interface functionality
@@ -49,11 +50,31 @@ module Manifolds
       end
     end
 
+    desc "entity NAME", "Create a new entity configuration"
+    def entity(name)
+      unless Dir.exist?("./projects")
+        @logger.error("Not inside a Manifolds umbrella project.")
+        return
+      end
+
+      entity_dir = "./projects/entities"
+      FileUtils.mkdir_p(entity_dir)
+
+      entity_path = "#{entity_dir}/#{name.downcase}.yml"
+      copy_entity_template(entity_path)
+      @logger.info "Created entity configuration for '#{name}'."
+    end
+
     private
 
     def copy_config_template(project_path)
       template_path = File.join(File.dirname(__FILE__), "templates", "config_template.yml")
       FileUtils.cp(template_path, "#{project_path}/manifold.yml")
+    end
+
+    def copy_entity_template(entity_path)
+      template_path = File.join(File.dirname(__FILE__), "templates", "entity_template.yml")
+      FileUtils.cp(template_path, entity_path)
     end
   end
 end
