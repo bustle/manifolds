@@ -8,3 +8,15 @@ Style/StringLiterals:
 
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
+
+Style/Documentation:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 18 # or set to `Enabled: false` to disable completely
+
+RSpec/MultipleExpectations:
+  Enabled: false
