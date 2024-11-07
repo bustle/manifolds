@@ -28,11 +28,11 @@ RSpec.describe Manifolds::CLI do
       before { cli.init(project_name) }
 
       it "creates a 'projects' directory for the project" do
-        expect(Dir.exist?("./#{project_name}/projects")).to be true
+        expect(Dir.exist?(File.join(Dir.pwd, project_name, "projects"))).to be true
       end
 
       it "creates a 'vectors' directory for the project" do
-        expect(Dir.exist?("./#{project_name}/vectors")).to be true
+        expect(Dir.exist?(File.join(Dir.pwd, project_name, "vectors"))).to be true
       end
     end
   end
@@ -52,7 +52,7 @@ RSpec.describe Manifolds::CLI do
       end
 
       it "creates a 'tables' directory for the project" do
-        expect(Dir.exist?("./projects/#{sub_project_name}/tables")).to be true
+        expect(Dir.exist?(File.join(Dir.pwd, "projects", sub_project_name, "tables"))).to be true
       end
 
       it "creates a 'routines' directory for the project" do
@@ -60,12 +60,12 @@ RSpec.describe Manifolds::CLI do
       end
 
       it "adds vectors to the project's manifold configuration" do
-        config = YAML.safe_load_file("./projects/#{sub_project_name}/manifold.yml")
+        config = YAML.safe_load_file(File.join(Dir.pwd, "projects", sub_project_name, "manifold.yml"))
         expect(config).to have_key("vectors")
       end
 
       it "adds metrics to the project's manifold configuration" do
-        config = YAML.safe_load_file("./projects/#{sub_project_name}/manifold.yml")
+        config = YAML.safe_load_file(File.join(Dir.pwd, "projects", sub_project_name, "manifold.yml"))
         expect(config).to have_key("metrics")
       end
     end
@@ -91,12 +91,12 @@ RSpec.describe Manifolds::CLI do
 
       context "when adding a vector within an umbrella project" do
         before do
-          FileUtils.mkdir_p("./vectors")
+          FileUtils.mkdir_p(File.join(Dir.pwd, "vectors"))
           cli.add(vector_name)
         end
 
         it "creates a vector configuration file with 'attributes'" do
-          config = YAML.safe_load_file("./vectors/page.yml")
+          config = YAML.safe_load_file(File.join(Dir.pwd, "vectors", "page.yml"))
           expect(config).to have_key("attributes")
         end
       end
