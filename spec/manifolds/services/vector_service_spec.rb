@@ -6,7 +6,7 @@ RSpec.describe Manifolds::Services::VectorService do
 
   describe "#load_vector_schema" do
     let(:vector_name) { "page" }
-    let(:vector_path) { "./vectors/page.yml" }
+    let(:vector_path) { "#{Dir.pwd}/vectors/page.yml" }
     let(:vector_config) do
       {
         "attributes" => {
