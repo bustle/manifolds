@@ -93,9 +93,9 @@ RSpec.describe Manifolds::CLI do
           cli.add(vector_name)
         end
 
-        it "creates a vector configuration file" do
-          expect(File.exist?("./vectors/page.yml")).to be true
-          expect(File.read("./vectors/page.yml")).to include("attributes:")
+        it "creates a vector configuration file with 'attributes'" do
+          config = YAML.safe_load_file("./vectors/page.yml")
+          expect(config).to have_key("attributes")
         end
       end
 
