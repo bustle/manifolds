@@ -21,7 +21,7 @@ module Manifolds
 
     desc "init NAME", "Generate a new umbrella project for data management"
     def init(name)
-      directory_path = "./#{name}"
+      directory_path = File.join(Dir.pwd, name)
       FileUtils.mkdir_p("#{directory_path}/projects")
       FileUtils.mkdir_p("#{directory_path}/vectors")
       @logger.info "Created umbrella project '#{name}' with projects and vectors directories."
@@ -38,12 +38,12 @@ module Manifolds
 
       desc "add VECTOR_NAME", "Add a new vector configuration"
       def add(name)
-        unless Dir.exist?("./vectors")
+        unless Dir.exist?("#{Dir.pwd}/vectors")
           @logger.error("Not inside a Manifolds umbrella project.")
           return
         end
 
-        vector_path = "./vectors/#{name.downcase}.yml"
+        vector_path = File.join(Dir.pwd, "vectors", "#{name.downcase}.yml")
         copy_vector_template(vector_path)
         @logger.info "Created vector configuration for '#{name}'."
       end
@@ -58,8 +58,8 @@ module Manifolds
 
     desc "add PROJECT_NAME", "Add a new project within the current umbrella project"
     def add(project_name)
-      project_path = "./projects/#{project_name}"
-      unless Dir.exist?("./projects")
+      project_path = File.join(Dir.pwd, "projects", project_name)
+      unless Dir.exist?("#{Dir.pwd}/projects")
         @logger.error("Not inside a Manifolds umbrella project.")
         return
       end
