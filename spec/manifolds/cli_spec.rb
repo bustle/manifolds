@@ -27,9 +27,11 @@ RSpec.describe Manifolds::CLI do
     context "when initializing a new project" do
       before { cli.init(project_name) }
 
-      it "creates a project directory structure" do
-        expect(Dir.exist?("./#{project_name}")).to be true
+      it "creates a 'projects' directory for the project" do
         expect(Dir.exist?("./#{project_name}/projects")).to be true
+      end
+
+      it "creates a 'vectors' directory for the project" do
         expect(Dir.exist?("./#{project_name}/vectors")).to be true
       end
     end
@@ -49,16 +51,20 @@ RSpec.describe Manifolds::CLI do
         Dir.chdir("..")
       end
 
-      it "creates the expected project structure" do
+      it "creates a 'tables' directory for the project" do
         expect(Dir.exist?("./projects/#{sub_project_name}/tables")).to be true
+      end
+
+      it "creates a 'routines' directory for the project" do
         expect(Dir.exist?("./projects/#{sub_project_name}/routines")).to be true
       end
 
-      it "creates a manifold configuration file" do
-        config_file = "./projects/#{sub_project_name}/manifold.yml"
-        expect(File.exist?(config_file)).to be true
-        expect(File.read(config_file)).to include("vectors:")
-        expect(File.read(config_file)).to include("metrics:")
+      it "adds vectors to the project's manifold configuration" do
+        expect(File.read("./projects/#{sub_project_name}/manifold.yml")).to include("vectors:")
+      end
+
+      it "adds metrics to the project's manifold configuration" do
+        expect(File.read("./projects/#{sub_project_name}/manifold.yml")).to include("metrics:")
       end
     end
 
