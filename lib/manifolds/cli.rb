@@ -31,10 +31,9 @@ module Manifolds
     subcommand "vectors", Class.new(Thor) {
       namespace :vectors
 
-      def initialize(*args)
-        super
-        @logger = Logger.new($stdout)
-        @logger.level = Logger::INFO
+      def initialize(*args, logger: Logger.new($stdout))
+        super(*args)
+        @logger = logger
       end
 
       desc "add VECTOR_NAME", "Add a new vector configuration"

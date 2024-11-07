@@ -84,7 +84,7 @@ RSpec.describe Manifolds::CLI do
 
   describe "vectors" do
     describe "add" do
-      subject(:cli) { vectors_command.new }
+      subject(:cli) { vectors_command.new(logger: null_logger) }
 
       let(:vector_name) { "Page" }
       let(:vectors_command) { described_class.new.class.subcommand_classes["vectors"] }
@@ -103,7 +103,7 @@ RSpec.describe Manifolds::CLI do
 
       context "when outside an umbrella project" do
         it "indicates that the command must be run within a project" do
-          expect { cli.add(vector_name) }
+          expect { vectors_command.new.add(vector_name) }
             .to output(/Not inside a Manifolds umbrella project/).to_stdout
         end
       end
