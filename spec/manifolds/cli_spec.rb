@@ -60,11 +60,13 @@ RSpec.describe Manifolds::CLI do
       end
 
       it "adds vectors to the project's manifold configuration" do
-        expect(File.read("./projects/#{sub_project_name}/manifold.yml")).to include("vectors:")
+        config = YAML.safe_load_file("./projects/#{sub_project_name}/manifold.yml")
+        expect(config).to have_key("vectors")
       end
 
       it "adds metrics to the project's manifold configuration" do
-        expect(File.read("./projects/#{sub_project_name}/manifold.yml")).to include("metrics:")
+        config = YAML.safe_load_file("./projects/#{sub_project_name}/manifold.yml")
+        expect(config).to have_key("metrics")
       end
     end
 
