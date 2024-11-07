@@ -6,7 +6,17 @@ RSpec.describe Manifolds::Services::VectorService do
 
   describe "#load_vector_schema" do
     let(:vector_name) { "page" }
-    let(:vector_path) { "#{Dir.pwd}/vectors/page.yml" }
+    let(:expected_schema) do
+      {
+        "name" => "page",
+        "type" => "RECORD",
+        "fields" => [
+          { "name" => "id", "type" => "STRING", "mode" => "NULLABLE" },
+          { "name" => "url", "type" => "STRING", "mode" => "NULLABLE" },
+          { "name" => "created_at", "type" => "TIMESTAMP", "mode" => "NULLABLE" }
+        ]
+      }
+    end
     let(:vector_config) do
       {
         "attributes" => {
@@ -18,27 +28,19 @@ RSpec.describe Manifolds::Services::VectorService do
     end
 
     before do
+      vector_path = File.join(Dir.pwd, "vectors", "#{vector_name}.yml")
       allow(File).to receive(:exist?).with(vector_path).and_return(true)
       allow(YAML).to receive(:load_file).with(vector_path).and_return(vector_config)
     end
 
     it "loads and transforms vector schema" do
       schema = service.load_vector_schema(vector_name)
-      expect(schema).to eq(
-        {
-          "name" => "page",
-          "type" => "RECORD",
-          "fields" => [
-            { "name" => "id", "type" => "STRING", "mode" => "NULLABLE" },
-            { "name" => "url", "type" => "STRING", "mode" => "NULLABLE" },
-            { "name" => "created_at", "type" => "TIMESTAMP", "mode" => "NULLABLE" }
-          ]
-        }
-      )
+      expect(schema).to eq(expected_schema)
     end
 
     context "when vector file doesn't exist" do
       before do
+        vector_path = File.join(Dir.pwd, "vectors", "#{vector_name}.yml")
         allow(File).to receive(:exist?).with(vector_path).and_return(false)
         allow(logger).to receive(:error)
       end
@@ -48,6 +50,7 @@ RSpec.describe Manifolds::Services::VectorService do
       end
 
       it "logs error" do
+        vector_path = File.join(Dir.pwd, "vectors", "#{vector_name}.yml")
         service.load_vector_schema(vector_name)
         expect(logger).to have_received(:error)
           .with("Vector configuration not found: #{vector_path}")

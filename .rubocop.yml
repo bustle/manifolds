@@ -3,9 +3,6 @@ require: rubocop-rspec
 AllCops:
   TargetRubyVersion: 3.0
 
-RSpec/ExampleLength:
-  Max: 18
-
 RSpec/NestedGroups:
   Max: 4
 

@@ -44,13 +44,7 @@ RSpec.describe Manifolds::Services::BigQueryService do
 
       it "includes the expected schema structure" do
         schema = JSON.parse(File.read(File.join(Dir.pwd, "projects", project_name, "bq", "tables", "dimensions.json")))
-        expect(schema).to include(
-          {
-            "type" => "STRING",
-            "name" => "id",
-            "mode" => "REQUIRED"
-          }
-        )
+        expect(schema).to include({ "type" => "STRING", "name" => "id", "mode" => "REQUIRED" })
       end
     end
 
