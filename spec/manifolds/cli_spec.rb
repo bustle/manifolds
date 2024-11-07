@@ -51,21 +51,23 @@ RSpec.describe Manifolds::CLI do
         Dir.chdir("..")
       end
 
+      let(:project_path) { File.join(Dir.pwd, "projects", sub_project_name) }
+
       it "creates a 'tables' directory" do
-        expect(Dir.exist?(File.join(Dir.pwd, "projects", sub_project_name, "tables"))).to be true
+        expect(Dir.exist?(File.join(project_path, "tables"))).to be true
       end
 
       it "creates a 'routines' directory" do
-        expect(Dir.exist?(File.join(Dir.pwd, "projects", sub_project_name, "routines"))).to be true
+        expect(Dir.exist?(File.join(project_path, "routines"))).to be true
       end
 
       it "adds vectors to the project's manifold configuration" do
-        config = YAML.safe_load_file(File.join(Dir.pwd, "projects", sub_project_name, "manifold.yml"))
+        config = YAML.safe_load_file(File.join(project_path, "manifold.yml"))
         expect(config).to have_key("vectors")
       end
 
       it "adds metrics to the project's manifold configuration" do
-        config = YAML.safe_load_file(File.join(Dir.pwd, "projects", sub_project_name, "manifold.yml"))
+        config = YAML.safe_load_file(File.join(project_path, "manifold.yml"))
         expect(config).to have_key("metrics")
       end
     end
