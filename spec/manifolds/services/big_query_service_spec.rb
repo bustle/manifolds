@@ -11,7 +11,7 @@ RSpec.describe Manifolds::Services::BigQueryService do
 
   before do
     FakeFS.activate!
-    FileUtils.mkdir_p("./projects/#{project_name}")
+    FileUtils.mkdir_p(File.join(Dir.pwd, "projects", project_name))
   end
 
   after do
@@ -22,14 +22,14 @@ RSpec.describe Manifolds::Services::BigQueryService do
     context "when the project configuration exists" do
       before do
         # Create a test configuration
-        FileUtils.mkdir_p("./vectors")
-        File.write("./vectors/user.yml", <<~YAML)
+        FileUtils.mkdir_p(File.join(Dir.pwd, "vectors"))
+        File.write(File.join(Dir.pwd, "vectors", "user.yml"), <<~YAML)
           attributes:
             user_id: string
             email: string
         YAML
 
-        File.write("./projects/#{project_name}/manifold.yml", <<~YAML)
+        File.write(File.join(Dir.pwd, "projects", project_name, "manifold.yml"), <<~YAML)
           vectors:
             - User
         YAML
@@ -38,12 +38,12 @@ RSpec.describe Manifolds::Services::BigQueryService do
       end
 
       it "generates a dimensions schema file" do
-        schema_file = "./projects/#{project_name}/bq/tables/dimensions.json"
+        schema_file = File.join(Dir.pwd, "projects", project_name, "bq", "tables", "dimensions.json")
         expect(File.exist?(schema_file)).to be true
       end
 
       it "includes the expected schema structure" do
-        schema = JSON.parse(File.read("./projects/#{project_name}/bq/tables/dimensions.json"))
+        schema = JSON.parse(File.read(File.join(Dir.pwd, "projects", project_name, "bq", "tables", "dimensions.json")))
         expect(schema).to include(
           {
             "type" => "STRING",

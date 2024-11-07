@@ -13,7 +13,7 @@ module Manifolds
       end
 
       def generate_dimensions_schema(project_name)
-        config_path = "./projects/#{project_name}/manifold.yml"
+        config_path = File.join(Dir.pwd, "projects", project_name, "manifold.yml")
         return unless validate_config_exists(config_path, project_name)
 
         config = YAML.load_file(config_path)
@@ -40,8 +40,9 @@ module Manifolds
       end
 
       def create_dimensions_file(project_name, dimensions)
-        FileUtils.mkdir_p("./projects/#{project_name}/bq/tables")
-        File.write("./projects/#{project_name}/bq/tables/dimensions.json", dimensions_schema(dimensions))
+        tables_dir = File.join(Dir.pwd, "projects", project_name, "bq", "tables")
+        FileUtils.mkdir_p(tables_dir)
+        File.write(File.join(tables_dir, "dimensions.json"), dimensions_schema(dimensions))
         @logger.info("Generated BigQuery dimensions table schema for '#{project_name}'.")
       end
 
