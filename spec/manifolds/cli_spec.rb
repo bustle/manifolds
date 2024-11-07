@@ -27,11 +27,11 @@ RSpec.describe Manifolds::CLI do
     context "when initializing a new project" do
       before { cli.init(project_name) }
 
-      it "creates a 'projects' directory for the project" do
+      it "creates a 'projects' directory" do
         expect(Dir.exist?(File.join(Dir.pwd, project_name, "projects"))).to be true
       end
 
-      it "creates a 'vectors' directory for the project" do
+      it "creates a 'vectors' directory" do
         expect(Dir.exist?(File.join(Dir.pwd, project_name, "vectors"))).to be true
       end
     end
@@ -51,11 +51,11 @@ RSpec.describe Manifolds::CLI do
         Dir.chdir("..")
       end
 
-      it "creates a 'tables' directory for the project" do
+      it "creates a 'tables' directory" do
         expect(Dir.exist?(File.join(Dir.pwd, "projects", sub_project_name, "tables"))).to be true
       end
 
-      it "creates a 'routines' directory for the project" do
+      it "creates a 'routines' directory" do
         expect(Dir.exist?("./projects/#{sub_project_name}/routines")).to be true
       end
 
