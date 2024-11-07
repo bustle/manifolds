@@ -43,8 +43,12 @@ RSpec.describe Manifolds::Services::VectorService do
         allow(logger).to receive(:error)
       end
 
-      it "returns nil and logs error" do
+      it "returns nil" do
         expect(service.load_vector_schema(vector_name)).to be_nil
+      end
+
+      it "logs error" do
+        service.load_vector_schema(vector_name)
         expect(logger).to have_received(:error)
           .with("Vector configuration not found: #{vector_path}")
       end
