@@ -56,7 +56,7 @@ RSpec.describe Manifolds::CLI do
       end
 
       it "creates a 'routines' directory" do
-        expect(Dir.exist?("./projects/#{sub_project_name}/routines")).to be true
+        expect(Dir.exist?(File.join(Dir.pwd, "projects", sub_project_name, "routines"))).to be true
       end
 
       it "adds vectors to the project's manifold configuration" do
