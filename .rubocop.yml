@@ -3,9 +3,6 @@ require: rubocop-rspec
 AllCops:
   TargetRubyVersion: 3.0
 
-RSpec/NestedGroups:
-  Max: 4
-
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 

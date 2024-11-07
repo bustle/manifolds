@@ -82,30 +82,28 @@ RSpec.describe Manifolds::CLI do
     end
   end
 
-  describe "vectors" do
-    describe "add" do
-      subject(:cli) { vectors_command.new(logger: null_logger) }
+  describe "vectors#add" do
+    subject(:cli) { vectors_command.new(logger: null_logger) }
 
-      let(:vector_name) { "Page" }
-      let(:vectors_command) { described_class.new.class.subcommand_classes["vectors"] }
+    let(:vector_name) { "Page" }
+    let(:vectors_command) { described_class.new.class.subcommand_classes["vectors"] }
 
-      context "when adding a vector within an umbrella project" do
-        before do
-          FileUtils.mkdir_p(File.join(Dir.pwd, "vectors"))
-          cli.add(vector_name)
-        end
-
-        it "creates a vector configuration file with 'attributes'" do
-          config = YAML.safe_load_file(File.join(Dir.pwd, "vectors", "page.yml"))
-          expect(config).to have_key("attributes")
-        end
+    context "when adding a vector within an umbrella project" do
+      before do
+        FileUtils.mkdir_p(File.join(Dir.pwd, "vectors"))
+        cli.add(vector_name)
       end
 
-      context "when outside an umbrella project" do
-        it "indicates that the command must be run within a project" do
-          expect { vectors_command.new.add(vector_name) }
-            .to output(/Not inside a Manifolds umbrella project/).to_stdout
-        end
+      it "creates a vector configuration file with 'attributes'" do
+        config = YAML.safe_load_file(File.join(Dir.pwd, "vectors", "page.yml"))
+        expect(config).to have_key("attributes")
+      end
+    end
+
+    context "when outside an umbrella project" do
+      it "indicates that the command must be run within a project" do
+        expect { vectors_command.new.add(vector_name) }
+          .to output(/Not inside a Manifolds umbrella project/).to_stdout
       end
     end
   end
