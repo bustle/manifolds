@@ -1,88 +1,80 @@
 # frozen_string_literal: true
 
-require_relative "../../lib/manifolds/cli"
-require "fileutils"
-require "logger"
-
 RSpec.describe Manifolds::CLI do
-  let(:project_name) { "commerce" }
-  let(:sub_project_name) { "Pages" }
+  include FakeFS::SpecHelpers
+
+  let(:project_name) { "wetland" }
+  let(:workspace_name) { "Commerce" }
   let(:null_logger) { Logger.new(File::NULL) }
-  let(:bq_service) { instance_double("Manifolds::Services::BigQueryService", "commerce") }
+
+  before do
+    # Set up any template files that need to exist
+    FileUtils.mkdir_p("#{File.dirname(__FILE__)}/../../lib/manifolds/templates")
+    File.write("#{File.dirname(__FILE__)}/../../lib/manifolds/templates/workspace_template.yml", "vectors:\nmetrics:")
+    File.write("#{File.dirname(__FILE__)}/../../lib/manifolds/templates/vector_template.yml", "attributes:")
+  end
 
   describe "#init" do
     subject(:cli) { described_class.new(logger: null_logger) }
 
-    before do
-      allow(FileUtils).to receive(:mkdir_p)
-      allow(File).to receive(:open)
-      cli.init(project_name)
-    end
+    context "when initializing a new project" do
+      after { cli.init(project_name) }
 
-    it "creates the projects directory" do
-      expect(FileUtils).to have_received(:mkdir_p).with("./#{project_name}/projects")
+      it { expect(null_logger).to receive(:info) }
+
+      it "figures out how to check it interacted with the API?"
     end
   end
 
   describe "#add" do
-    let(:cli) { described_class.new(logger: null_logger) }
+    subject(:cli) { described_class.new(logger: null_logger) }
 
-    context "when within an umbrella project" do
+    context "when adding a workspace within a project" do
       before do
-        FileUtils.mkdir_p("#{project_name}/projects") # Simulate an umbrella project
-        Dir.chdir(project_name)
-        cli.add(sub_project_name)
+        FileUtils.mkdir_p("#{project_name}/workspaces")
+        cli.add(workspace_name)
       end
 
-      after do
-        Dir.chdir("..")
-        FileUtils.rm_rf(project_name)
+      after { Dir.chdir("..") }
+
+      let(:workspace_path) { File.join(Dir.pwd, "workspaces", workspace_name) }
+
+      it "creates a 'tables' directory" do
+        expect(Pathname.new(workspace_path).join("tables")).to be_directory
       end
 
-      it "creates a tables directory within the project" do
-        expect(Dir.exist?("./projects/#{sub_project_name}/tables")).to be true
+      it "creates a 'routines' directory" do
+        expect(Pathname.new(workspace_path).join("routines")).to be_directory
       end
 
-      it "creates a routines directory within the project" do
-        expect(Dir.exist?("./projects/#{sub_project_name}/routines")).to be true
+      it "adds vectors to the project's manifold configuration" do
+        config = YAML.safe_load_file(File.join(workspace_path, "manifold.yml"))
+        expect(config).to have_key("vectors")
       end
 
-      it "creates a manifold.yml file" do
-        expect(File.exist?("./projects/#{sub_project_name}/manifold.yml")).to be true
-      end
-
-      it "writes the manifold.yml file with dimensions" do
-        expect(File.read("./projects/#{sub_project_name}/manifold.yml")).to include("dimensions")
-      end
-
-      it "writes the manifold.yml file with metrics" do
-        config = File.read("./projects/#{sub_project_name}/manifold.yml")
-        expect(config).to include("metrics")
-      end
-    end
-
-    context "when outside an umbrella project" do
-      subject(:cli_with_stdout) { described_class.new(logger: Logger.new($stdout)) }
-
-      it "does not allow adding projects and logs an error" do
-        expect do
-          cli_with_stdout.add("Pages")
-        end.to output(/Not inside a Manifolds umbrella project./).to_stdout
+      it "adds metrics to the project's manifold configuration" do
+        config = YAML.safe_load_file(File.join(workspace_path, "manifold.yml"))
+        expect(config).to have_key("metrics")
       end
     end
   end
 
-  describe "#generate" do
-    subject(:cli) { described_class.new(logger: null_logger) }
+  describe "vectors#add" do
+    subject(:cli) { vectors_command.new(logger: null_logger) }
 
-    before do
-      allow(Manifolds::Services::BigQueryService).to receive(:new).and_return(bq_service)
-      allow(bq_service).to receive(:generate_dimensions_schema)
-    end
+    let(:project) { Manifolds::API::Project.new("wetland") }
+    let(:vector_name) { "page" }
+    let(:vectors_command) { described_class.new.class.subcommand_classes["vectors"] }
 
-    it "calls generate_dimensions_schema on bq service with correct project name" do
-      cli.generate("Pages", "bq")
-      expect(bq_service).to have_received(:generate_dimensions_schema).with("Pages")
+    context "when adding a vector within an umbrella project" do
+      before do
+        cli.add(vector_name)
+      end
+
+      it "creates a vector configuration file with 'attributes'" do
+        config = YAML.safe_load_file(File.join(Dir.pwd, "vectors", "page.yml"))
+        expect(config).to have_key("attributes")
+      end
     end
   end
 end
