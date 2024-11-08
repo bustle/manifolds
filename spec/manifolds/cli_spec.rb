@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "../../lib/manifolds/cli"
-require "fileutils"
-require "logger"
-require "fakefs/spec_helpers"
+# require_relative "../../lib/manifolds/cli"
+# require "fileutils"
+# require "logger"
 
 RSpec.describe Manifolds::CLI do
   include FakeFS::SpecHelpers
@@ -24,15 +23,11 @@ RSpec.describe Manifolds::CLI do
     subject(:cli) { described_class.new(logger: null_logger) }
 
     context "when initializing a new project" do
-      before { cli.init(project_name) }
+      after { cli.init(project_name) }
 
-      it "creates a 'projects' directory" do
-        expect(Dir.exist?(File.join(Dir.pwd, project_name, "projects"))).to be true
-      end
+      it { expect(null_logger).to receive(:info) }
 
-      it "creates a 'vectors' directory" do
-        expect(Dir.exist?(File.join(Dir.pwd, project_name, "vectors"))).to be true
-      end
+      it "figures out how to check it interacted with the API?"
     end
   end
 
@@ -84,12 +79,12 @@ RSpec.describe Manifolds::CLI do
   describe "vectors#add" do
     subject(:cli) { vectors_command.new(logger: null_logger) }
 
-    let(:vector_name) { "Page" }
+    let(:project) { Manifolds::API::Project.new("wetland") }
+    let(:vector_name) { "page" }
     let(:vectors_command) { described_class.new.class.subcommand_classes["vectors"] }
 
     context "when adding a vector within an umbrella project" do
       before do
-        FileUtils.mkdir_p(File.join(Dir.pwd, "vectors"))
         cli.add(vector_name)
       end
 

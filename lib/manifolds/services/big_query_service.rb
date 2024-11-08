@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "yaml"
-require "json"
-
 module Manifolds
   module Services
     # Handles the generation of BigQuery schemas based on project configurations
