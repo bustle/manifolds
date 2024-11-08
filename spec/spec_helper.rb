@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require "manifolds"
 require "simplecov"
 require "simplecov-json"
 require "simplecov-lcov"
+require "fakefs/spec_helpers"
 
 SimpleCov::Formatter::LcovFormatter.config do |c|
   c.report_with_single_file = true

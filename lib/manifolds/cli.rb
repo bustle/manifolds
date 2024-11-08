@@ -1,30 +1,24 @@
 # frozen_string_literal: true
 
-require "thor"
-require "fileutils"
-require "logger"
-
-require_relative "services/big_query_service"
-require_relative "services/vector_service"
-
 module Manifolds
   # CLI provides command line interface functionality
   # for creating and managing umbrella projects for data management.
   class CLI < Thor
+    attr_accessor :logger, :bq_service
+
     def initialize(*args, logger: Logger.new($stdout))
       super(*args)
-      @logger = logger
-      @logger.level = Logger::INFO
 
-      @bq_service = Services::BigQueryService.new(@logger)
+      self.logger = logger
+      logger.level = Logger::INFO
+
+      self.bq_service = Services::BigQueryService.new(logger)
     end
 
     desc "init NAME", "Generate a new umbrella project for data management"
     def init(name)
-      directory_path = File.join(Dir.pwd, name)
-      FileUtils.mkdir_p("#{directory_path}/projects")
-      FileUtils.mkdir_p("#{directory_path}/vectors")
-      @logger.info "Created umbrella project '#{name}' with projects and vectors directories."
+      Project.new(name).init
+      logger.info "Created umbrella project '#{name}' with projects and vectors directories."
     end
 
     desc "vectors SUBCOMMAND ...ARGS", "Manage vectors"
@@ -33,19 +27,22 @@ module Manifolds
 
       def initialize(*args, logger: Logger.new($stdout))
         super(*args)
-        @logger = logger
+        self.logger = logger
       end
 
       desc "add VECTOR_NAME", "Add a new vector configuration"
       def add(name)
-        unless Dir.exist?("#{Dir.pwd}/vectors")
-          @logger.error("Not inside a Manifolds umbrella project.")
-          return
-        end
+        project = API::Project.new(File.basename(Dir.getwd))
+        vector = API::Vector.new(name, project: project)
+        vector.add
+        # unless Dir.exist?("#{Dir.pwd}/vectors")
+        #   logger.error("Not inside a Manifolds umbrella project.")
+        #   return
+        # end
 
-        vector_path = File.join(Dir.pwd, "vectors", "#{name.downcase}.yml")
-        copy_vector_template(vector_path)
-        @logger.info "Created vector configuration for '#{name}'."
+        # vector_path = File.join(Dir.pwd, "vectors", "#{name.downcase}.yml")
+        # copy_vector_template(vector_path)
+        logger.info "Created vector configuration for '#{name}'."
       end
 
       private
@@ -60,23 +57,23 @@ module Manifolds
     def add(project_name)
       project_path = File.join(Dir.pwd, "projects", project_name)
       unless Dir.exist?("#{Dir.pwd}/projects")
-        @logger.error("Not inside a Manifolds umbrella project.")
+        logger.error("Not inside a Manifolds umbrella project.")
         return
       end
 
       FileUtils.mkdir_p("#{project_path}/tables")
       FileUtils.mkdir_p("#{project_path}/routines")
       copy_config_template(project_path)
-      @logger.info "Added project '#{project_name}' with tables and routines directories."
+      logger.info "Added project '#{project_name}' with tables and routines directories."
     end
 
     desc "generate PROJECT_NAME SERVICE", "Generate services for a project"
     def generate(project_name, service)
       case service
       when "bq"
-        @bq_service.generate_dimensions_schema(project_name)
+        bq_service.generate_dimensions_schema(project_name)
       else
-        @logger.error("Unsupported service: #{service}")
+        logger.error("Unsupported service: #{service}")
       end
     end
 

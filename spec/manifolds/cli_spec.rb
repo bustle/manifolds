@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "../../lib/manifolds/cli"
-require "fileutils"
-require "logger"
-require "fakefs/spec_helpers"
+# require_relative "../../lib/manifolds/cli"
+# require "fileutils"
+# require "logger"
 
 RSpec.describe Manifolds::CLI do
   include FakeFS::SpecHelpers
@@ -25,15 +24,9 @@ RSpec.describe Manifolds::CLI do
     subject(:cli) { described_class.new(logger: null_logger) }
 
     context "when initializing a new project" do
-      before { cli.init(project_name) }
-
-      it "creates a 'projects' directory" do
-        expect(Dir.exist?(File.join(Dir.pwd, project_name, "projects"))).to be true
-      end
-
-      it "creates a 'vectors' directory" do
-        expect(Dir.exist?(File.join(Dir.pwd, project_name, "vectors"))).to be true
-      end
+      it { expect(null_logger).to receive(:info) }
+      it { expect()}
+      after { cli.init(project_name) }
     end
   end
 

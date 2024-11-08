@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "yaml"
-
 module Manifolds
   module Services
     # Handles the loading of vector schemas from configuration files
