@@ -20,13 +20,6 @@ SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new([
                                                                 ])
 
 SimpleCov.start do
-  add_filter "/spec/"
-  add_filter "/vendor/"
-
-  # Track all directories containing source code
-  add_group "Manifolds", "lib/manifolds"
-  add_group "Services", "lib/manifolds/services"
-
   # Set the minimum coverage percentage
   minimum_coverage 95
   minimum_coverage_by_file 90
