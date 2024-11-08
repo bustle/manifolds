@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe Manifolds::API::Project do
+  include FakeFS::SpecHelpers
+
   let(:name) { "wetland" }
 
   context "with name" do

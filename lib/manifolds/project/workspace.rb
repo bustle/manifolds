@@ -2,29 +2,33 @@
 
 module Manifolds
   module API
+    # Encapsulates a single manifold.
     class Workspace
-      attr_reader :name, :project, :template_file
+      attr_reader :name, :project, :template_path, :template_file
 
-      def initialize(name, project:,
-                     template: File.join(Dir.pwd, "lib", "manifolds", "templates",
-                                         "workspace_template.yml"))
+      DEFAULT_TEMPLATE_PATH = File.join(
+        Dir.pwd, "lib", "manifolds", "templates", "workspace_template.yml"
+      )
+
+      def initialize(name, project:, template_path: DEFAULT_TEMPLATE_PATH)
         self.name = name
         self.project = project
-        self.template_file = File.new(template)
+        self.template_path = template_path
+        self.template_file = File.new(template_path)
       end
 
       def add
-        FileUtils.mkdir_p(tables_directory)
-        FileUtils.mkdir_p(routines_directory)
-        FileUtils.cp(template_file, manifold_path)
+        Pathname.new(tables_directory).mkpath
+        Pathname.new(routines_directory).mkpath
+        FileUtils.cp(template_path, manifold_path)
       end
 
       def tables_directory
-        Pathname.new(File.join(project.workspaces_directory, name, "tables"))
+        Pathname.new(project.workspaces_directory).join(name, "tables")
       end
 
       def routines_directory
-        Pathname.new(File.join(project.workspaces_directory, name, "routines"))
+        Pathname.new(project.workspaces_directory).join(name, "routines")
       end
 
       def manifold_file
@@ -38,12 +42,12 @@ module Manifolds
       end
 
       def manifold_path
-        File.join(project.workspaces_directory, name, "manifold.yml")
+        Pathname.new(project.workspaces_directory).join(name, "manifold.yml")
       end
 
       private
 
-      attr_writer :name, :project, :template_file
+      attr_writer :name, :project, :template_path, :template_file
     end
   end
 end

@@ -44,16 +44,7 @@ module Manifolds
     def add(name, project: API::Project.new(File.basename(Dir.getwd)))
       workspace = API::Workspace.new(name, project: project)
       workspace.add
-      # project_path = File.join(Dir.pwd, "projects", project_name)
-      # unless Dir.exist?("#{Dir.pwd}/projects")
-      #   logger.error("Not inside a Manifolds umbrella project.")
-      #   return
-      # end
-
-      # FileUtils.mkdir_p("#{project_path}/tables")
-      # FileUtils.mkdir_p("#{project_path}/routines")
-      # copy_config_template(project_path)
-      logger.info "Added project '#{project_name}' with tables and routines directories."
+      logger.info "Added workspace '#{name}' with tables and routines directories."
     end
 
     desc "generate PROJECT_NAME SERVICE", "Generate services for a project"

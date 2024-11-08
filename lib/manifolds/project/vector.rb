@@ -2,20 +2,24 @@
 
 module Manifolds
   module API
+    # Describes the entities for whom metrics are calculated.
     class Vector
-      attr_reader :name, :project, :config_template_file
+      attr_reader :name, :project, :config_template_path
 
-      def initialize(name, project:,
-                     config_template_file: File.join(Dir.pwd, "lib", "manifolds", "templates", "vector_template.yml"))
+      DEFAULT_CONFIG_TEMPLATE_PATH = File.join(
+        Dir.pwd, "lib", "manifolds", "templates", "vector_template.yml"
+      )
+
+      def initialize(name, project:, config_template_path: DEFAULT_CONFIG_TEMPLATE_PATH)
         self.name = name
         self.project = project
-        self.config_template_file = File.new(config_template_file)
+        self.config_template_path = Pathname.new(config_template_path)
       end
 
       def add
-        FileUtils.mkdir_p(tables_directory)
-        FileUtils.mkdir_p(routines_directory)
-        FileUtils.cp(config_template_file, config_file)
+        Pathname.new(tables_directory).mkpath
+        Pathname.new(routines_directory).mkpath
+        FileUtils.cp(config_template_path, config_file_path)
       end
 
       def tables_directory
@@ -26,13 +30,13 @@ module Manifolds
         Pathname.new(File.join(project.vectors_directory, "routines"))
       end
 
-      def config_file
-        File.new(File.join(project.directory, "#{name.downcase}.yml"))
+      def config_file_path
+        Pathname.new(project.directory).join("vectors", "#{name.downcase}.yml")
       end
 
       private
 
-      attr_writer :name, :project, :config_template_file
+      attr_writer :name, :project, :config_template_path
     end
   end
 end

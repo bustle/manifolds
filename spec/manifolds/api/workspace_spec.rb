@@ -1,8 +1,18 @@
 # frozen_string_literal: true
 
 RSpec.describe Manifolds::API::Workspace do
+  include FakeFS::SpecHelpers
+
   let(:project) { Manifolds::API::Project.new("wetland") }
   let(:name) { "people" }
+
+  before do
+    # Set up any template files that need to exist
+    FileUtils.mkdir_p("#{File.dirname(__FILE__)}/../../../lib/manifolds/templates")
+    File.write("#{File.dirname(__FILE__)}/../../../lib/manifolds/templates/workspace_template.yml",
+               "vectors:\nmetrics:")
+    File.write("#{File.dirname(__FILE__)}/../../../lib/manifolds/templates/vector_template.yml", "attributes:")
+  end
 
   context "with name and project" do
     subject(:workspace) { described_class.new(name, project: project) }
@@ -16,7 +26,7 @@ RSpec.describe Manifolds::API::Workspace do
 
       it { expect(workspace.routines_directory).to be_directory }
       it { expect(workspace.tables_directory).to be_directory }
-      it { expect(File).to exist(workspace.manifold_file) }
+      it { expect(File).to exist(workspace.manifold_path) }
     end
 
     describe ".routines_directory" do
