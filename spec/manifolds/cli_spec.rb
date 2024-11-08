@@ -13,12 +13,9 @@ RSpec.describe Manifolds::CLI do
   let(:null_logger) { Logger.new(File::NULL) }
 
   before do
-    FakeFS do
-      # Set up any template files that need to exist
-      FileUtils.mkdir_p("#{File.dirname(__FILE__)}/../../lib/manifolds/templates")
-      File.write("#{File.dirname(__FILE__)}/../../lib/manifolds/templates/config_template.yml", "vectors:\nmetrics:")
-      File.write("#{File.dirname(__FILE__)}/../../lib/manifolds/templates/vector_template.yml", "attributes:")
-    end
+    FileUtils.mkdir_p("#{File.dirname(__FILE__)}/../../lib/manifolds/templates")
+    File.write("#{File.dirname(__FILE__)}/../../lib/manifolds/templates/config_template.yml", "vectors:\nmetrics:")
+    File.write("#{File.dirname(__FILE__)}/../../lib/manifolds/templates/vector_template.yml", "attributes:")
   end
 
   describe "#init" do
