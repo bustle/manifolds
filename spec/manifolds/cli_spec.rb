@@ -13,9 +13,11 @@ RSpec.describe Manifolds::CLI do
   let(:null_logger) { Logger.new(File::NULL) }
 
   before do
-    FileUtils.mkdir_p("#{File.dirname(__FILE__)}/../../lib/manifolds/templates")
-    File.write("#{File.dirname(__FILE__)}/../../lib/manifolds/templates/config_template.yml", "vectors:\nmetrics:")
-    File.write("#{File.dirname(__FILE__)}/../../lib/manifolds/templates/vector_template.yml", "attributes:")
+    templates_dir = File.expand_path("../../lib/manifolds/templates", __dir__)
+    FileUtils.mkdir_p(templates_dir)
+
+    File.write(File.join(templates_dir, "config_template.yml"), "vectors:\nmetrics:")
+    File.write(File.join(templates_dir, "vector_template.yml"), "attributes:")
   end
 
   describe "#init" do
