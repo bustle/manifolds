@@ -46,9 +46,7 @@ RSpec.describe Manifolds::CLI do
         cli.add(sub_project_name)
       end
 
-      after do
-        Dir.chdir("..")
-      end
+      after { Dir.chdir("..") }
 
       let(:project_path) { File.join(Dir.pwd, "projects", sub_project_name) }
 
