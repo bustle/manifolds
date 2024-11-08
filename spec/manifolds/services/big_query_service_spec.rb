@@ -8,6 +8,9 @@ RSpec.describe Manifolds::Services::BigQueryService do
   let(:logger) { instance_spy(Logger) }
   let(:service) { described_class.new(logger) }
   let(:project_name) { "test_project" }
+  let(:dimensions_file) do
+    File.join(Dir.pwd, "projects", project_name, "bq", "tables", "dimensions.json")
+  end
 
   before do
     FakeFS.activate!
@@ -38,12 +41,11 @@ RSpec.describe Manifolds::Services::BigQueryService do
       end
 
       it "generates a dimensions schema file" do
-        schema_file = File.join(Dir.pwd, "projects", project_name, "bq", "tables", "dimensions.json")
-        expect(File.exist?(schema_file)).to be true
+        expect(File.exist?(dimensions_file)).to be true
       end
 
       it "includes the expected schema structure" do
-        schema = JSON.parse(File.read(File.join(Dir.pwd, "projects", project_name, "bq", "tables", "dimensions.json")))
+        schema = JSON.parse(File.read(dimensions_file))
         expect(schema).to include({ "type" => "STRING", "name" => "id", "mode" => "REQUIRED" })
       end
     end
