@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "manifolds"
+require "logger"
 require "simplecov"
 require "simplecov-json"
 require "simplecov-lcov"

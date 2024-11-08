@@ -24,9 +24,11 @@ RSpec.describe Manifolds::CLI do
     subject(:cli) { described_class.new(logger: null_logger) }
 
     context "when initializing a new project" do
-      it { expect(null_logger).to receive(:info) }
-      it { expect()}
       after { cli.init(project_name) }
+
+      it { expect(null_logger).to receive(:info) }
+
+      it "figures out how to check it interacted with the API?"
     end
   end
 
@@ -80,12 +82,12 @@ RSpec.describe Manifolds::CLI do
   describe "vectors#add" do
     subject(:cli) { vectors_command.new(logger: null_logger) }
 
-    let(:vector_name) { "Page" }
+    let(:project) { Manifolds::API::Project.new("wetland") }
+    let(:vector_name) { "page" }
     let(:vectors_command) { described_class.new.class.subcommand_classes["vectors"] }
 
     context "when adding a vector within an umbrella project" do
       before do
-        FileUtils.mkdir_p(File.join(Dir.pwd, "vectors"))
         cli.add(vector_name)
       end
 

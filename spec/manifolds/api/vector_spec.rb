@@ -16,6 +16,7 @@ RSpec.describe Manifolds::API::Vector do
 
       it { expect(vector.routines_directory).to be_directory }
       it { expect(vector.tables_directory).to be_directory }
+      it { expect(vector.config_file).to exist }
     end
 
     describe ".routines_directory" do
@@ -25,5 +26,5 @@ RSpec.describe Manifolds::API::Vector do
     describe ".tables_directory" do
       it { expect(vector.tables_directory).to be_an_instance_of(Pathname) }
     end
-  end"
+  end
 end

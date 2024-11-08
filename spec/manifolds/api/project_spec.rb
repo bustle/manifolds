@@ -4,27 +4,25 @@ RSpec.describe Manifolds::API::Project do
   let(:name) { "wetland" }
 
   context "with name" do
-    describe do
-      subject(:project) { described_class.new(name) }
+    subject(:project) { described_class.new(name) }
 
-      describe ".initialize" do
-        it { is_expected.to have_attributes(name: name) }
-      end
+    describe ".initialize" do
+      it { is_expected.to have_attributes(name: name) }
+    end
 
-      describe ".init" do
-        before { project.init }
+    describe ".init" do
+      before { project.init }
 
-        it { expect(project.vectors_directory).to be_directory }
-        it { expect(project.projects_directory).to be_directory }
-      end
+      it { expect(project.vectors_directory).to be_directory }
+      it { expect(project.projects_directory).to be_directory }
+    end
 
-      describe ".projects_directory" do
-        it { expect(project.projects_directory).to be_an_instance_of(Pathname) }
-      end
+    describe ".projects_directory" do
+      it { expect(project.projects_directory).to be_an_instance_of(Pathname) }
+    end
 
-      describe ".vectors_directory" do
-        it { expect(project.vectors_directory).to be_an_instance_of(Pathname) }
-      end
+    describe ".vectors_directory" do
+      it { expect(project.vectors_directory).to be_an_instance_of(Pathname) }
     end
   end
 

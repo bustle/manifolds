@@ -5,8 +5,8 @@ module Manifolds::API
   class Vector
     attr_reader :name, :project, :config_template
 
-    def initialize(name, project:, config_template: File.join("lib", "templates", "vector_template.yml"))
-      binding.break
+    def initialize(name, project:,
+                   config_template: File.join(Dir.pwd, "lib", "manifolds", "templates", "vector_template.yml"))
       self.name = name
       self.project = project
       self.config_template = config_template
@@ -15,6 +15,7 @@ module Manifolds::API
     def add
       FileUtils.mkdir_p(tables_directory)
       FileUtils.mkdir_p(routines_directory)
+      FileUtils.cp(config_template, config_file)
     end
 
     def tables_directory
@@ -26,11 +27,11 @@ module Manifolds::API
     end
 
     def config_file
-      File.join(Dir.pwd, "vectors", "#{name.downcase}.yml")
+      Pathname.new(File.join(project.directory, "#{name.downcase}.yml"))
     end
 
     private
 
-    attr_writer :name, :project
+    attr_writer :name, :project, :config_template
   end
 end

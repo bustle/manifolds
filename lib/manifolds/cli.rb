@@ -17,7 +17,7 @@ module Manifolds
 
     desc "init NAME", "Generate a new umbrella project for data management"
     def init(name)
-      Project.new(name).init
+      Manifolds::API::Project.new(name).init
       logger.info "Created umbrella project '#{name}' with projects and vectors directories."
     end
 
@@ -25,31 +25,18 @@ module Manifolds
     subcommand "vectors", Class.new(Thor) {
       namespace :vectors
 
+      attr_accessor :logger
+
       def initialize(*args, logger: Logger.new($stdout))
         super(*args)
         self.logger = logger
       end
 
       desc "add VECTOR_NAME", "Add a new vector configuration"
-      def add(name)
-        project = API::Project.new(File.basename(Dir.getwd))
+      def add(name, project: API::Project.new(File.basename(Dir.getwd)))
         vector = API::Vector.new(name, project: project)
         vector.add
-        # unless Dir.exist?("#{Dir.pwd}/vectors")
-        #   logger.error("Not inside a Manifolds umbrella project.")
-        #   return
-        # end
-
-        # vector_path = File.join(Dir.pwd, "vectors", "#{name.downcase}.yml")
-        # copy_vector_template(vector_path)
         logger.info "Created vector configuration for '#{name}'."
-      end
-
-      private
-
-      def copy_vector_template(vector_path)
-        template_path = File.join(File.dirname(__FILE__), "templates", "vector_template.yml")
-        FileUtils.cp(template_path, vector_path)
       end
     }
 
