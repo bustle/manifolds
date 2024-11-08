@@ -14,11 +14,11 @@ RSpec.describe Manifolds::API::Project do
       before { project.init }
 
       it { expect(project.vectors_directory).to be_directory }
-      it { expect(project.projects_directory).to be_directory }
+      it { expect(project.workspaces_directory).to be_directory }
     end
 
-    describe ".projects_directory" do
-      it { expect(project.projects_directory).to be_an_instance_of(Pathname) }
+    describe ".workspaces_directory" do
+      it { expect(project.workspaces_directory).to be_an_instance_of(Pathname) }
     end
 
     describe ".vectors_directory" do

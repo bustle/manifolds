@@ -9,12 +9,12 @@ module Manifolds::API
     end
 
     def init
-      FileUtils.mkdir_p(projects_directory)
+      FileUtils.mkdir_p(workspaces_directory)
       FileUtils.mkdir_p(vectors_directory)
     end
 
-    def projects_directory
-      Pathname.new(File.join(directory, "projects"))
+    def workspaces_directory
+      Pathname.new(File.join(directory, "workspaces"))
     end
 
     def vectors_directory
